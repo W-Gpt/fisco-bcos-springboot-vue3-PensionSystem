@@ -52,19 +52,11 @@ contract MainContract{
         address toSocialSecDept; //转入社保局
         uint status; //审批状态 => 0是保存未提交 1是已提交 2是已经转出 3转入已接收;
     }
-    mapping(address=> PersonalInfo) personalInfos;
-    mapping(address=> SocialSecurityDepartment) socialSecurityDepartments;
-    mapping(address=> CompanyInfo) companyInfos;
-    mapping(address=> PensionAccount) pensionAccounts;
-    mapping(address=> address[]) companyOnPersonalAddr;
-    mapping(address=> address[]) socialSecurityOnCompanys;
-    mapping(address=> mapping(address=> uint)) laborOnCompanys;
-    mapping(address=> bool) gongAnRosl;
-    mapping(address=> bool) laborRosl;
-    address[] personalAll;
-    address[] companyAll;
-    Application[] applications;
-    LaborInfo[] labores;
+    struct city{
+        address gongAn;
+        address laoDon;
+        address sheBao;
+    }
     
     address owner;    
     constructor() public {
