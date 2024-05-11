@@ -7,7 +7,6 @@ contract MainContract{
         uint id;
         uint age;
         string name;
-        uint[] laborInfoIndex;
     }
     //社保局
     struct SocialSecDept {
@@ -67,12 +66,14 @@ contract MainContract{
         string insuranceDate;//参保年月
         uint paymentDate;//缴费所属时间
     }
-    struct city{
-        address gongAn;
-        address laoDon;
-        address sheBao;
+    //劳动局角色
+    struct LaborRosl{
+        address LaborRoslAddr;
+        string city;
     }
     
+    mapping(address => bool)  laodongRoles; // 劳动部门角色映射
+    mapping (address=> SocialSecDept) SocialSecDepts;// 社保局映射
     address owner;    
     constructor() public {
         owner = msg.sender; // 将合约部署者设置为合约拥有者
