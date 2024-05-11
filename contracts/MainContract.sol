@@ -53,19 +53,18 @@ contract MainContract{
         uint status; //审批状态 => 0是保存未提交 1是已提交 2是已经转出 3转入已接收;
     }
     //缴费记录结构体
-    struct PaymentHistory{
-        uint id;
-        address companyAddress;
-        address socialSecurityAddr;
+    struct PaymentRecord{
+        uint id; //身份证
+        address companyAddress; //公司
+        address socialSecurityAddr; //社保局
         string city; // 所在城市
-        uint256 maxBase; // 最大保险基数
-        uint256 minBase; // 最小保险基数
+        uint paymentBase; //缴费基数
         uint personalRate; // 个人缴费比例
         uint companyRate; // 公司缴费比例
         uint personalPayments; // 个人缴纳
         uint companyPayments; //公司缴纳
         uint totalPayments; // 总缴纳
-        uint paymentDate;//缴费所属时间
+        string paymentDate;//缴费所属时间
     }
     struct city{
         address gongAn;
