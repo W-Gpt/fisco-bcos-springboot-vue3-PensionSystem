@@ -41,6 +41,7 @@ contract MainContract{
         uint paymentDate; // 缴费时间
         bool isSponsored; // 是否离职
         address employer; // 新增雇主字段
+        uint[] laborInfoIndex; // 新增员工信息索引
     }
     //转移申请
     struct Application {
@@ -71,12 +72,27 @@ contract MainContract{
         address LaborRoslAddr;
         string city;
     }
-    
-    mapping(address => bool)  laodongRoles; // 劳动部门角色映射
-    mapping (address=> SocialSecDept) SocialSecDepts;// 社保局映射
     address owner;    
+    //------------------------------------公安------------------------------------
+    mapping (address => uint[]) public AllPersonID;
+    mapping (uint => PersonInfo) public PersonById;
+    address security;
     constructor() public {
         owner = msg.sender; // 将合约部署者设置为合约拥有者
     }
     //基本构思City结构体 => 三个角色
+    // 设置公安局总局账号
+    function setSecurity(address _security) public {
+        require(msg.sender == owner);
+        security = _security;
+    }
+    function addPerson(uint _id,uint _age,string _name) public {
+        require(msg.sender == security);
+        PersonById[_id] = PersonalInfo(_id,_age,_name)
+        AllPersonID[msg.sender].push(_id);
+    }
+    //------------------------------------公安------------------------------------
+    mapping(address => bool)  laodongRoles; // 劳动部门角色映射
+    mapping (address=> SocialSecDept) SocialSecDepts;// 社保局映射
+    
 }
