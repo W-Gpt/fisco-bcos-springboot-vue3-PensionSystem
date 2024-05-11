@@ -30,6 +30,7 @@ contract MainContract{
         uint workDate; // 参与工作时间
         uint salary; // 工资
         address companyAddress;
+        bool isInsurance;
     }
     //养老保险
     struct PensionAccount {
@@ -68,8 +69,8 @@ contract MainContract{
         uint paymentDate;//缴费所属时间
     }
     //劳动局角色
-    struct LaborRosl{
-        address LaborRoslAddr;
+    struct LaodRosl{
+        address laodRoslAddr;
         string city;
     }
     address owner;    
@@ -92,7 +93,13 @@ contract MainContract{
         AllPersonID[msg.sender].push(_id);
     }
     //------------------------------------公安------------------------------------
-    mapping(address => bool)  laodongRoles; // 劳动部门角色映射
-    mapping (address=> SocialSecDept) SocialSecDepts;// 社保局映射
-    
+    mapping(address => bool)  laodRoles; // 劳动部门角色映射
+    mapping(address=> LaodRosl) laodRosls;// 社保局映射
+    mapping(uint=> LaborInfo) LaborInfos;//劳动信息索引
+    mapping(address=> uint[]) LaborAllIndex;
+    mapping(uint=> uint[]) laborIndexPer;//个人的工作索引
+    function regLaodongRoles(address _laodRoslAddr,string _ctiy) public{
+        laodRoles[_laodRoslAddr]=true;
+        laodRosls[_laodRoslAddr]=LaborInfo(_laodRoslAddr,_ctiy);
+    }
 }
