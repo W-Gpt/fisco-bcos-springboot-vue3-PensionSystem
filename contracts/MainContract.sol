@@ -142,6 +142,4 @@ contract MainContract{
         companyInfos[_companyAddress].companyPayments+=companyPay;
     }
 
-    //修改一波
-    function get() {}
 }
