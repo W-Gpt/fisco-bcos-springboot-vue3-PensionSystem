@@ -141,5 +141,6 @@ contract MainContract{
         pensionAccounts[_personalAddr].paymentDate=now;
         companyInfos[_companyAddress].companyPayments+=companyPay;
     }
+    function
 
 }
