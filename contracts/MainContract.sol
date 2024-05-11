@@ -13,8 +13,8 @@ contract MainContract{
     struct SocialSecDept {
         address socialSecurityAddr;
         string city; // 所在城市
-        uint256 maxBase; // 最大保险基数
-        uint256 minBase; // 最小保险基数
+        uint maxBase; // 最大保险基数
+        uint minBase; // 最小保险基数
         uint personalRate; // 个人缴费比例
         uint companyRate; // 公司缴费比例
     }
@@ -64,7 +64,8 @@ contract MainContract{
         uint personalPayments; // 个人缴纳
         uint companyPayments; //公司缴纳
         uint totalPayments; // 总缴纳
-        string paymentDate;//缴费所属时间
+        string insuranceDate;//参保年月
+        uint paymentDate;//缴费所属时间
     }
     struct city{
         address gongAn;
