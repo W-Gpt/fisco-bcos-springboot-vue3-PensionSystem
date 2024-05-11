@@ -10,8 +10,8 @@ contract MainContract{
     }
     //社保局
     struct SocialSecDept {
-        address socialSecurityAddr;
         string city; // 所在城市
+        address socialSecurityAddr;
         uint maxBase; // 最大保险基数
         uint minBase; // 最小保险基数
         uint personalRate; // 个人缴费比例
@@ -73,7 +73,25 @@ contract MainContract{
         address laodRoslAddr;
         string city;
     }
-    address owner;    
+    address owner;
+    //------------------------------------社保局------------------------------------
+    mapping(string => SocialSecDept) SocialSecDepts; //city name => SocialSecurityRosl
+    mapping(address => bool) SocialSecDeptRoles;
+    mapping(address => address[]) AllCompany;//socialSecurityAddr =》 companies 该社保机构里的所有公司
+    mapping(address => Company) CompanyByAddr;//Companyaddress => Company
+    function addSocialSecDept(string _city,address _socialSecurityAddr,uint _maxBase,uint minBase,uint personalRate,uint companyRate) public{
+        require(owner == msg.sender);
+        require(SocialSecDeptRoles[_socialSecurityAddr] == false,"社保局已存在。");
+        SocialSecDepts[_city]= SocialSecDept(_city,_socialSecurityAddr,_maxBase,minBase,personalRate,companyRate); // 添加部门
+        SocialSecDeptRoles[_socialSecurityAddr]=true; // 添加角色
+    }
+    function addCompany(address _companyAddress,string _city,string _name,uint _balance) public {
+        require(SocialSecDeptRoles[msg.sender],"只有社保局可以在社保局内添加公司");
+        AllCompany[SocialSecDepts[_city].socialSecurityAddr].push(_companyAddress);
+        CompanyByAddr[_companyAddress] = Company(_companyAddress,_city,_name,balance);
+
+        
+    }
     //------------------------------------公安------------------------------------
     mapping (address => uint[]) public AllPersonID;
     mapping (uint => PersonInfo) public PersonById;
