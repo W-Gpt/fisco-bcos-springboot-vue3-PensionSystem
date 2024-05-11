@@ -67,30 +67,15 @@ contract MainContract{
         uint totalPayments; // 总缴纳
         uint paymentDate;//缴费所属时间
     }
-    mapping(address=> PersonalInfo) personalInfos;
-    mapping(address=> SocialSecurityDepartment) socialSecurityDepartments;
-    mapping(address=> CompanyInfo) companyInfos;
-    mapping(address=> PensionAccount) pensionAccounts;
-    mapping(address=> address[]) companyOnPersonalAddr;
-    mapping(address=> address[]) socialSecurityOnCompanys;
-    mapping(address=> mapping(address=> uint)) laborOnCompanys;
-    mapping(address=> bool) gongAnRosl;
-    mapping(address=> bool) laborRosl;
-    address[] personalAll;
-    address[] companyAll;
-    Application[] applications;
-    LaborInfo[] labores;
+    struct city{
+        address gongAn;
+        address laoDon;
+        address sheBao;
+    }
     
     address owner;    
     constructor() public {
         owner = msg.sender; // 将合约部署者设置为合约拥有者
     }
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only contract owner can call this function.");
-        _;
-    }
     //基本构思City结构体 => 三个角色
-    
-    
-
 }
