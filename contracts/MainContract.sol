@@ -62,12 +62,5 @@ contract MainContract{
     constructor() public {
         owner = msg.sender; // 将合约部署者设置为合约拥有者
     }
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only contract owner can call this function.");
-        _;
-    }
     //基本构思City结构体 => 三个角色
-    
-    
-
 }
