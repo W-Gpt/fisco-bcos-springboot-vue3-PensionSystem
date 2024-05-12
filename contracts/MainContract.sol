@@ -27,12 +27,12 @@ contract MainContract{
     // 劳动信息结构体
     struct LaborInfo{
         uint id;
+        address companyAddress;
         uint workDate; // 参与工作时间
         uint salary; // 工资
-        address companyAddress;
         bool isInsurance;
     }
-    //养老保险
+    //养老保险账号
     struct PensionAccount {
         uint id;//个人身份证号
         string city; // 所在城市
@@ -41,8 +41,8 @@ contract MainContract{
         uint totalPayments; // 总账户余额
         uint paymentDate; // 缴费时间
         bool isSponsored; // 是否离职
-        address employer; // 新增雇主字段
-        uint[] laborInfoIndex; // 新增员工信息索引
+        address company; // 新增雇主字段
+        uint[] laborInfoIndex; // 劳动信息数组
     }
     //转移申请
     struct Application {
@@ -79,6 +79,9 @@ contract MainContract{
     //添加在该社保局缴纳社保的公司
     //查看该公司的缴纳信息
     //查看该公司的参保人数
+    //申请迁移
+    //同意迁移
+    //存储迁移数据
     mapping(string => SocialSecDept) SocialSecDepts; //city name => SocialSecurityRosl
     mapping(address => bool) SocialSecDeptRoles;
     mapping(address => address[]) AllCompany;//socialSecurityAddr =》 companies 该社保机构里的所有公司
@@ -101,8 +104,15 @@ contract MainContract{
         Company memory company = CompanyByAddr[_companyAddress];
         return (company.companyAddress,company.city,company.name,company.balance);
     }
-    //------------------------------------公司------------------------------------
     
+    //------------------------------------公司------------------------------------
+    //------------------------------------养老保险账号------------------------------------
+    mapping(uint => PensionAccount) public PensionAccounts; //根据id获取或者创建养老保险账户
+    function addPenSionAccount(uint _id,uint _age,string _name,address _company) public {
+        // require(msg.sender == CompanyByAddr[msg.sender].companyAddress);
+        PensionAccounts[_id] = PensionAccount(_id,CompanyByAddr[msg.sender].city,0,0,0,0,false,msg.sender,new uint[](0));
+        PersonById[_id] = PersonalInfo(_id,_age,_name);
+    }
     //------------------------------------公安------------------------------------
     mapping (address => uint[]) public AllPersonID;
     mapping (uint => PersonalInfo) public PersonById;
