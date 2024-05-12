@@ -101,6 +101,8 @@ contract MainContract{
         Company memory company = CompanyByAddr[_companyAddress];
         return (company.companyAddress,company.city,company.name,company.balance);
     }
+    //------------------------------------公司------------------------------------
+    
     //------------------------------------公安------------------------------------
     mapping (address => uint[]) public AllPersonID;
     mapping (uint => PersonalInfo) public PersonById;
