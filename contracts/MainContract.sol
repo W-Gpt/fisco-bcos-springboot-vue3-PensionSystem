@@ -75,6 +75,10 @@ contract MainContract{
     }
     address owner;
     //------------------------------------社保局------------------------------------
+    //社保局应该有的功能
+    //添加在该社保局缴纳社保的公司
+    //查看该公司的缴纳信息
+    //查看该公司的参保人数
     mapping(string => SocialSecDept) SocialSecDepts; //city name => SocialSecurityRosl
     mapping(address => bool) SocialSecDeptRoles;
     mapping(address => address[]) AllCompany;//socialSecurityAddr =》 companies 该社保机构里的所有公司
@@ -86,15 +90,20 @@ contract MainContract{
         SocialSecDeptRoles[_socialSecurityAddr]=true; // 添加角色
     }
     function addCompany(address _companyAddress,string _city,string _name,uint _balance) public {
-        require(SocialSecDeptRoles[msg.sender],"只有社保局可以在社保局内添加公司");
+        require(SocialSecDeptRoles[msg.sender],"只有社保局可以添加在社保局缴纳社保的公司");
         AllCompany[SocialSecDepts[_city].socialSecurityAddr].push(_companyAddress);
-        CompanyByAddr[_companyAddress] = Company(_companyAddress,_city,_name,balance);
-
-        
+        CompanyByAddr[_companyAddress] = Company(_companyAddress,_city,_name,_balance);
+    }
+    function getAllCompanyAddr() public view returns (address[] memory) {
+        return AllCompany[msg.sender];
+    }
+    function getCompanyByAddr(address _companyAddress) public view returns (address,string,string,uint) {
+        Company memory company = CompanyByAddr[_companyAddress];
+        return (company.companyAddress,company.city,company.name,company.balance);
     }
     //------------------------------------公安------------------------------------
     mapping (address => uint[]) public AllPersonID;
-    mapping (uint => PersonInfo) public PersonById;
+    mapping (uint => PersonalInfo) public PersonById;
     address security;
     constructor() public {
         owner = msg.sender; // 将合约部署者设置为合约拥有者
@@ -107,7 +116,7 @@ contract MainContract{
     }
     function addPerson(uint _id,uint _age,string _name) public {
         require(msg.sender == security);
-        PersonById[_id] = PersonalInfo(_id,_age,_name)
+        PersonById[_id] = PersonalInfo(_id,_age,_name);
         AllPersonID[msg.sender].push(_id);
     }
     //------------------------------------公安------------------------------------
