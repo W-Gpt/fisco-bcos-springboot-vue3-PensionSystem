@@ -129,4 +129,12 @@ contract MainContract{
         laodRoles[_laodRoslAddr]=true;
         laodRosls[_laodRoslAddr]=LaborInfo(_laodRoslAddr,_ctiy);
     }
+    function removeStaffById(uint[] _staffs,uint _id) public{ //覆盖删除法
+        for(uint i=0;i<_staffs.length;i++){
+            if(_staffs[i]==_id){
+                _staffs[i]=_staffs[_staffs.length-1];
+                _staffs.pop()
+            }
+        }
+    }
 }
