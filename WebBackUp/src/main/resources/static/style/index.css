@@ -1,0 +1,176 @@
+html, body, div, p, ul, li, img, h3 {
+  padding: 0;
+  margin: 0;
+}
+html {
+  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+  height: 100%;
+}
+body, body > section {
+  height: 100%;
+}
+body > section > section {
+  padding-top: 1px;
+}
+main.el-main {
+  background: #f3f3f3;
+}
+.login {
+  box-sizing: border-box;
+  width: 60%;
+  margin: 8% auto;
+}
+.login h3 {
+  text-align: center;
+  margin-bottom: 10%;
+}
+.login div.el-col div {
+  background: #fff;
+  height: 120px;
+  max-width: 222px;
+  margin: 0 auto;
+  text-align: center;
+  line-height: 120px;
+  font-weight: 600;
+}
+.login div.el-col div:hover {
+  box-shadow: 8px 6px #e5e5e5;
+}
+.is-login {
+  box-sizing: border-box;   
+  margin: 30% auto 0;
+  background: #fff;
+  width: 550px;
+  height: 250px;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 40px;
+}
+.is-login div {
+  color: #333;
+  margin: 10px 0;
+}
+.is-login div span {
+  color: #999;
+}
+.header {
+  display: flex; 
+  align-items: center;
+}
+div.header h3 {
+  margin-left: 20px;
+  color: #fff;
+}
+div.header img {
+  width: 72px;
+}
+.aside, .header {
+  background: #3e3e3e;
+  color: #fff;
+  width: 100%;
+}
+.header > span {
+  flex-grow: 1;
+  text-align: right;
+}
+button.button-logout {
+  float: right;
+}
+button.button-logout::after {
+  content: '';
+  display: block;
+  clear: right;
+}
+.tracedetail {
+  margin: 0 10%;
+}
+.trace-title {
+  color: #00b651;
+}
+.trace-timeline {
+  padding-left: 20%;
+}
+.fooddetail table {
+  border-spacing: 0;
+}
+.fooddetail .content {
+  padding-left: 20%;
+}
+.fooddetail .content > div {
+  height: 40px;
+}
+.consumer {
+  height: 100%;
+}
+.consumer > div:nth-child(1) {
+display: flex;
+justify-content: center;
+align-items: center;
+}
+.consumer > div:nth-child(1) > div {
+  width: 80%;
+  border: 1px solid #ddd;
+  border-top: 6px solid #00b651;
+  padding: 5% 4%;
+}
+.consumer > div:nth-child(1) > div div.el-form-item {
+  padding: 5%;
+}
+.consumer > div:nth-child(2), .consumer > div:nth-child(1) > div {
+  background: #fff;
+}
+.consumer > div:nth-child(1) button.el-button {
+  background: #00b651;
+  width: 90%;
+  margin-left: 5%;
+
+}
+.consumer > div:nth-child(2) {
+  padding: 1% 2%;
+  height: 85vh;
+  overflow-y: scroll;
+  font-size: 14px;
+}
+.consumer div.bg-purple-light {
+  height: 100%;
+}
+.consumer div.consumer-tip{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.el-timeline-item__content > div, .fooddetail .content > div {
+  display: flex;
+}
+.trace-content div > span, .trace-content div > span {
+  flex: 1 1 0;
+}
+.trace-content div > span:nth-child(2), .trace-content div > span:nth-child(2) {
+  text-align: center;
+}
+.el-timeline-item__tail {
+  border-left: 2px dashed #E4E7ED;
+}
+/* .el-timeline-no-node .el-timeline-item__node{
+  background: transparent;
+}
+.el-timeline-no-tail .el-timeline-item__tail{
+  border: none;
+} */
+.detail-dialog .el-dialog__header {
+  padding: 0;
+}
+.el-table {
+  margin-top: 20px;
+  background: #fff;
+}
+.el-table td, .el-table th {
+  text-align: center;
+}
+.el-input {
+  width: 20vw; 
+  margin-right: 20px;
+}
