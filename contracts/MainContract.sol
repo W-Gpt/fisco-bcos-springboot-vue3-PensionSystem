@@ -28,9 +28,10 @@ contract MainContract{
     struct LaborInfo{
         uint id;
         address companyAddress;
+        string city;
         uint workDate; // 参与工作时间
         uint salary; // 工资
-        bool isInsurance;
+        bool isInsurance;//是否参保 第一次为其缴费变为true
     }
     //养老保险账号
     struct PensionAccount {
@@ -119,6 +120,7 @@ contract MainContract{
     address security;
     constructor() public {
         owner = msg.sender; // 将合约部署者设置为合约拥有者
+        laborIndex=1;
     }
     //基本构思City结构体 => 三个角色
     // 设置公安局总局账号
@@ -131,16 +133,31 @@ contract MainContract{
         PersonById[_id] = PersonalInfo(_id,_age,_name);
         AllPersonID[msg.sender].push(_id);
     }
-    //------------------------------------公安------------------------------------
-    mapping(address => bool)  laodRoles; // 劳动部门角色映射
-    mapping(address=> LaodRosl) laodRosls;// 社保局映射
-    mapping(uint=> LaborInfo) LaborInfos;//劳动信息索引
-    mapping(address=> uint[]) LaborAllIndex;
+    //------------------------------------劳动局与信息------------------------------------
+    // mapping(address => bool)  laodRoles; // 劳动部门角色映射
+    mapping(address=> LaodRosl) laodRosls;// 劳动部门角色映射
+    mapping(uint=> LaborInfo) laborInfos;//劳动信息索引
+    mapping(address=> uint[]) laborAllIndex;
+    mapping(address=> uint[]) companyAllper;
     mapping(uint=> uint[]) laborIndexPer;//个人的工作索引
-    function regLaodongRoles(address _laodRoslAddr,string _ctiy) public{
-        laodRoles[_laodRoslAddr]=true;
-        laodRosls[_laodRoslAddr]=LaborInfo(_laodRoslAddr,_ctiy);
+    uint laborIndex;
+    function regLaodongRoles(address _laodRoslAddr,string _city) public{
+        require(laodRols[_laodRoslAddr]==address(0),"该劳动局地址已注册");
+        // require(laodRosls[_laodRoslAddr].ctiy!=); //判断城市是否已有劳动局
+        // laodRoles[_laodRoslAddr]=true;
+        laodRosls[_laodRoslAddr]=LaborInfo(_laodRoslAddr,_city);
     }
+
+    function addLaborInfo(string _id,address _companyAddress,uint _workDate,uint _salary) public{
+        require(laodRols[msg.sender]==address(0),"只有劳动局才能添加工作信息");
+        require(keccak256(abi.encodePacked(PersonById[_id].id))!=keccak256(abi.encodePacked("")),"不存在该个人信息");
+        // require(keccak256(abi.encodePacked(laodRols[_laodRoslAddr].city))==keccak256(abi.encodePacked()),"劳动局与公司不在一个城市");
+        laborInfos[laborIndex]=LaborInfo(_id,_companyAddress,companys[_companyAddress].ctiy,_workDate,_salary,false);
+        companyAllper[_companyAddress].push(laoborIndex);
+        laborIndexPer[_id].push(laobarIndex);
+
+    }
+
     function removeStaffById(uint[] _staffs,uint _id) public{ //覆盖删除法
         for(uint i=0;i<_staffs.length;i++){
             if(_staffs[i]==_id){
