@@ -74,6 +74,8 @@ export default {
 
 <style>
   .login-center {
+    background: url(@/assets/backup.jpg);
+    background-size: cover;
     display: flex;
     justify-content: center;
     align-items: center;
