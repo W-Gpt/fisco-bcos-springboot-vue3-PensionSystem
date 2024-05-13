@@ -3,17 +3,17 @@
 本项目是一个基于FISCO-BCOS区块链的养老保险项目，使用Solidity 0.4.25编写智能合约，后端采用Spring Boot框架，前端使用Vue框架。
 
 ## 项目结构
-PensionSystem/
-../WebFrontUp
-../../views
-../../src
-../../utils
-../WebBackUp
-../../.idea
-../../src
-../../pom.xml
-../contract
-../../MainContract.sol
+### PensionSystem/
+### ../WebFrontUp
+### ../../views
+### ../../src
+### ../../utils
+### ../WebBackUp
+### ../../.idea
+### ../../src
+### ../../pom.xml
+### ../contract
+### ../../MainContract.sol
 ## 快速开始
 
 ### 前端启动
