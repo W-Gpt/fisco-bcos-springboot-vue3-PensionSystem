@@ -47,8 +47,8 @@ contract MainContract{
     //转移申请
     struct Application {
         uint id;// 申请人身份证号
-        address fromCompany; // 原城市
-        address toCompany; // 目标城市
+        address fromCompany; // 原公司
+        address toCompany; // 目公司
         address fromSocialSecDept; //原社保局
         address toSocialSecDept; //转入社保局
         uint status; //审批状态 => 0是保存未提交 1是已提交 2是已经转出 3转入已接收;
@@ -65,7 +65,7 @@ contract MainContract{
         uint personalPayments; // 个人缴纳
         uint companyPayments; //公司缴纳
         uint totalPayments; // 总缴纳
-        string insuranceDate;//参保年月
+        uint insuranceDate;//参保年月
         uint paymentDate;//缴费所属时间
     }
     //劳动局角色
@@ -104,14 +104,62 @@ contract MainContract{
         Company memory company = CompanyByAddr[_companyAddress];
         return (company.companyAddress,company.city,company.name,company.balance);
     }
+    function approvedTransfer(uint _id) public {
+        // require(SheBaoRole[msg.sender], "社保局才可以批准");
+        // require(personalInfo[_id].citys[personalInfo[_id].citys.length - 1] == msg.sender,"只有当前地的劳务局可以批准");
+        // require(transferInfo[_id].id != uint256(0), "申请不存在");
+        // require(!transferInfo[_id].isApproved, "社保局已批准");
+        ownerApplication[_id].status = 2;
+    }
+    function acceptTransfer(uint256 _id) public {
+        // require(SheBaoRole[msg.sender], "社保局才可以接受");
+        // require(transferInfo[_id].toCity == msg.sender,"只有转移地的劳务局可以批准");
+        // require(transferInfo[_id].id != uint256(0), "申请不存在");
+        // require(!transferInfo[_id].isReceived, "社保局已接收");
+        ownerApplication[_id].status = 3;
+        CompanyByAddr[ownerApplication[_id].toCompany].staffs.push(_id);
+        CompanyByAdd[transferInfo[_id].fromCompany].staffs = removeStaffById(CompanyByAdd[transferInfo[_id].fromCompany].staffs,_id);
+    }
     
     //------------------------------------公司------------------------------------
+    //公司应该有的功能
+    //添加该公司下的个人
+    //获取该公司下的个人
+    //缴纳社保
+    //获取缴纳信息
+    
+    mapping(address => uint[]) staffs;//公司 => 员工数组
+    // mapping(uint => uint[]) AllPayMent; // 员工id => 劳动信息数组
+    
+    // mapping(uint => PensionAccount) accountById;
+    // function addStaff(uint _id,uint _age,string _name) public {
+        // require(msg.sender == CompanyByAddr[msg.sender].companyAddress);
+        // staffs[msg.sender].push(_id);
+        // PersonById[_id] = PersonalInfo(_id,_age,_name);
+    // }
+    // function getStaffs() public view returns (uint[] memory) {
+    //     return staffs[msg.sender];
+    // }
+
     //------------------------------------养老保险账号------------------------------------
     mapping(uint => PensionAccount) public PensionAccounts; //根据id获取或者创建养老保险账户
+    mapping(uint => Application) ownerApplication;
     function addPenSionAccount(uint _id,uint _age,string _name,address _company) public {
         // require(msg.sender == CompanyByAddr[msg.sender].companyAddress);
-        PensionAccounts[_id] = PensionAccount(_id,CompanyByAddr[msg.sender].city,0,0,0,0,false,msg.sender,new uint[](0));
-        PersonById[_id] = PersonalInfo(_id,_age,_name);
+        PensionAccounts[_id] = PensionAccount(_id,CompanyByAddr[_company].city,0,0,0,0,false,_company,new uint[]());//初始化养老保险账号信息
+        PersonById[_id] = PersonalInfo(_id,_age,_name);//给公安发一份备案信息
+        staffs[_company].push(_id); //给公司员工数组添加员工id
+    }
+    function getPensionInfo (uint _id) public view returns (uint,string,uint,uint,uint,uint,bool,address,uint[]) {
+        PensionAccount memory account = PensionAccounts[_id];
+        return (account.id,account.city,account.personalPayments,account.companyPayments,account.totalPayments,account.paymentDate,account.isSponsored,account.company,account.laborInfoIndex);
+    }
+    function applyTransfer(uint _id, address _fromCompany, address _toCompany,address _fromSocialSecDept,_toSocialSecDept) public {
+        // require(employerInfo[_fromCompany].accountAddress != address(0), "目标公司不存在");
+        // require(keccak256(bytes(socialSecurityBureauMap[_bureauAddress].city)) == keccak256(bytes(companyMap[_toCompany].city)), "该城市社保局不存在");
+        // require(SheBaoRole[_toCity],"该城市社保局不存在");
+        ownerApplication[_id] = Application(_id,_fromCompany,_toCompany,_fromSocialSecDept,_toSocialSecDept,1);
+        
     }
     //------------------------------------公安------------------------------------
     mapping (address => uint[]) public AllPersonID;
@@ -141,12 +189,13 @@ contract MainContract{
         laodRoles[_laodRoslAddr]=true;
         laodRosls[_laodRoslAddr]=LaborInfo(_laodRoslAddr,_ctiy);
     }
-    function removeStaffById(uint[] _staffs,uint _id) public{ //覆盖删除法
+    function removeStaffById(uint[] _staffs,uint _id) public returns (uint[]){ //覆盖删除法
         for(uint i=0;i<_staffs.length;i++){
             if(_staffs[i]==_id){
                 _staffs[i]=_staffs[_staffs.length-1];
                 _staffs.pop()
             }
+            return _staffs;
         }
     }
 }
