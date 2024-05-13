@@ -97,6 +97,7 @@ contract MainContract{
         require(SocialSecDeptRoles[msg.sender],"只有社保局可以添加在社保局缴纳社保的公司");
         AllCompany[SocialSecDepts[_city].socialSecurityAddr].push(_companyAddress);
         CompanyByAddr[_companyAddress] = Company(_companyAddress,_city,_name,_balance);
+        laodAllCom[_companyAddress].push(_companyAddress);
     }
     function getAllCompanyAddr() public view returns (address[] memory) {
         return AllCompany[msg.sender];
@@ -221,7 +222,7 @@ contract MainContract{
         laborIndexPer[_id].push(laborIndex);
         laodAllCom[msg.sender].push(_companyAddress);
         staffs[_companyAddress].push(_id);
-        laborIndex++;
+        laborIndex++;   
     }
 
     function getLaodAllCompany() public returns(address[] memory){
