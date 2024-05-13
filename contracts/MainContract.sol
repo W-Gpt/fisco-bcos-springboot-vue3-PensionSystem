@@ -118,8 +118,8 @@ contract MainContract{
         // require(transferInfo[_id].id != uint256(0), "申请不存在");
         // require(!transferInfo[_id].isReceived, "社保局已接收");
         ownerApplication[_id].status = 3;
-        CompanyByAddr[ownerApplication[_id].toCompany].staffs.push(_id);
-        CompanyByAdd[transferInfo[_id].fromCompany].staffs = removeStaffById(CompanyByAdd[transferInfo[_id].fromCompany].staffs,_id);
+        staffs[ownerApplication[_id].toCompany].push(_id);
+        staffs[ownerApplication[_id].fromCompany] = removeStaffById(staffs[ownerApplication[_id].fromCompany],_id);
     }
     
     //------------------------------------公司------------------------------------
@@ -151,7 +151,8 @@ contract MainContract{
         SocialSecDept memory social = SocialSecDepts[account.city];
         uint Cmoney = salay * social.companyRate;
         uint Omoney = salay * social.personalRate;
-        PayMentInfo[index] = PaymentRecord(_id,account.company,social.socialSecurityAddr,account.city,salay,Omoney,Cmoney,insuranceDate,paymentDate);
+        uint Tmoney = Cmoney + Omoney;
+        PayMentInfo[index] = PaymentRecord(_id,account.company,social.socialSecurityAddr,account.city,salay,social.personalRate,social.companyRate,Omoney,Cmoney,Tmoney,insuranceDate,paymentDate);
 
     }
     
@@ -161,7 +162,7 @@ contract MainContract{
     mapping(uint => Application) ownerApplication;
     function addPenSionAccount(uint _id,uint _age,string _name,address _company) public {
         // require(msg.sender == CompanyByAddr[msg.sender].companyAddress);
-        PensionAccounts[_id] = PensionAccount(_id,CompanyByAddr[_company].city,0,0,0,0,false,_company,new uint[]());//初始化养老保险账号信息
+        PensionAccounts[_id] = PensionAccount(_id,CompanyByAddr[_company].city,0,0,0,0,false,_company,new uint[](0));//初始化养老保险账号信息
         PersonById[_id] = PersonalInfo(_id,_age,_name);//给公安发一份备案信息
         staffs[_company].push(_id); //给公司员工数组添加员工id
     }
@@ -169,7 +170,7 @@ contract MainContract{
         PensionAccount memory account = PensionAccounts[_id];
         return (account.id,account.city,account.personalPayments,account.companyPayments,account.totalPayments,account.paymentDate,account.isSponsored,account.company,account.laborInfoIndex);
     }
-    function applyTransfer(uint _id, address _fromCompany, address _toCompany,address _fromSocialSecDept,_toSocialSecDept) public {
+    function applyTransfer(uint _id, address _fromCompany, address _toCompany,address _fromSocialSecDept, address _toSocialSecDept) public {
         // require(employerInfo[_fromCompany].accountAddress != address(0), "目标公司不存在");
         // require(keccak256(bytes(socialSecurityBureauMap[_bureauAddress].city)) == keccak256(bytes(companyMap[_toCompany].city)), "该城市社保局不存在");
         // require(SheBaoRole[_toCity],"该城市社保局不存在");
@@ -204,7 +205,7 @@ contract MainContract{
     mapping(uint=> uint[]) laborIndexPer;//个人的工作索引
     uint laborIndex;
     function regLaodongRoles(address _laodRoslAddr,string memory _city) public{
-        require(laodRols[_laodRoslAddr]==address(0),"该劳动局地址已注册");
+        // require(laodRosls[_laodRoslAddr]==address(0),"该劳动局地址已注册");
         // require(laodRosls[_laodRoslAddr].ctiy!=); //判断城市是否已有劳动局
         // laodRoles[_laodRoslAddr]=true;
         laodRosls[_laodRoslAddr]=LaodRosl(_laodRoslAddr,_city);
@@ -212,12 +213,12 @@ contract MainContract{
 
     //增加劳动信息
     function addLaborInfo(uint _id,address _companyAddress,uint _workDate,uint _salary) public{
-        require(laodRols[msg.sender]==address(0),"只有劳动局才能添加工作信息");
-        require(PersonById[_id].id!=0,"不存在该个人信息");
+        // require(laodRosls[msg.sender]==address(0),"只有劳动局才能添加工作信息");
+        // require(PersonById[_id].id!=0,"不存在该个人信息");
         // require(keccak256(abi.encodePacked(laodRols[_laodRoslAddr].city))==keccak256(abi.encodePacked()),"劳动局与公司不在一个城市");
-        laborInfos[laborIndex]=LaborInfo(_id,_companyAddress,companys[_companyAddress].ctiy,_workDate,_salary,false);
-        companyAllper[_companyAddress].push(laoborIndex);
-        laborIndexPer[_id].push(laobarIndex);
+        laborInfos[laborIndex]=LaborInfo(_id,_companyAddress,CompanyByAddr[_companyAddress].city,_workDate,_salary,false);
+        companyAllper[_companyAddress].push(laborIndex);
+        laborIndexPer[_id].push(laborIndex);
         laodAllCom[msg.sender].push(_companyAddress);
         staffs[_companyAddress].push(_id);
         laborIndex++;
@@ -225,7 +226,7 @@ contract MainContract{
 
     function getLaodAllCompany() public returns(address[] memory){
         return laodAllCom[msg.sender];
-    };
+    }
 
     function getCompanyAllper(address _companyAddress) public returns(uint[] memory){
         return companyAllper[_companyAddress];
@@ -237,16 +238,25 @@ contract MainContract{
 
     function getLaborInfo(uint _laborIndex) public returns(uint,address,string memory,uint,uint,bool){
         LaborInfo memory laborInfo=laborInfos[_laborIndex];
-        return (laborInfo.id,laborInfo.companyAddress,laborInfo.ctiy,laborInfo.workDate,laborInfo.salary,laborInfo.isInsurance);
+        return (laborInfo.id,laborInfo.companyAddress,laborInfo.city,laborInfo.workDate,laborInfo.salary,laborInfo.isInsurance);
     }
 
-    function removeStaffById(uint[] _staffs,uint _id) public returns (uint[]){ //覆盖删除法
-        for(uint i=0;i<_staffs.length;i++){
-            if(_staffs[i]==_id){
-                _staffs[i]=_staffs[_staffs.length-1];
-                _staffs.pop()
+    function removeStaffById(uint[] memory _staffs, uint _id) public pure returns (uint[] memory) { 
+        uint length = _staffs.length;
+        uint[] memory result = new uint[](length);
+        uint counter = 0;
+
+        for(uint i = 0; i < length; i++) {
+            if(_staffs[i] != _id) {
+                result[counter] = _staffs[i];
+                counter++;
             }
-            return _staffs;
         }
+        uint[] memory finalResult = new uint[](counter);
+        for(uint j = 0; j < counter; j++) {
+            finalResult[j] = result[j];
+        }
+        return finalResult;
     }
+
 }
