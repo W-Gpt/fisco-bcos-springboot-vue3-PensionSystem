@@ -3,7 +3,8 @@ import org.fisco.bcos.sdk.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.crypto.signature.ECDSASignatureResult;
 import org.fisco.bcos.sdk.crypto.signature.SignatureResult;
 import org.fisco.bcos.sdk.model.CryptoType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+//import org.junit.Test;
 
 
 public class Crypto {
