@@ -185,25 +185,45 @@ contract MainContract{
     // mapping(address => bool)  laodRoles; // 劳动部门角色映射
     mapping(address=> LaodRosl) laodRosls;// 劳动部门角色映射
     mapping(uint=> LaborInfo) laborInfos;//劳动信息索引
-    mapping(address=> uint[]) laborAllIndex;
-    mapping(address=> uint[]) companyAllper;
+    mapping(address=> address[]) laodAllCom;
+    mapping(address=> uint[]) companyAllper;//公司的员工工作信息
     mapping(uint=> uint[]) laborIndexPer;//个人的工作索引
     uint laborIndex;
-    function regLaodongRoles(address _laodRoslAddr,string _city) public{
+    function regLaodongRoles(address _laodRoslAddr,string memory _city) public{
         require(laodRols[_laodRoslAddr]==address(0),"该劳动局地址已注册");
         // require(laodRosls[_laodRoslAddr].ctiy!=); //判断城市是否已有劳动局
         // laodRoles[_laodRoslAddr]=true;
-        laodRosls[_laodRoslAddr]=LaborInfo(_laodRoslAddr,_city);
+        laodRosls[_laodRoslAddr]=LaodRosl(_laodRoslAddr,_city);
     }
 
-    function addLaborInfo(string _id,address _companyAddress,uint _workDate,uint _salary) public{
+    //增加劳动信息
+    function addLaborInfo(uint _id,address _companyAddress,uint _workDate,uint _salary) public{
         require(laodRols[msg.sender]==address(0),"只有劳动局才能添加工作信息");
-        require(keccak256(abi.encodePacked(PersonById[_id].id))!=keccak256(abi.encodePacked("")),"不存在该个人信息");
+        require(PersonById[_id].id!=0,"不存在该个人信息");
         // require(keccak256(abi.encodePacked(laodRols[_laodRoslAddr].city))==keccak256(abi.encodePacked()),"劳动局与公司不在一个城市");
         laborInfos[laborIndex]=LaborInfo(_id,_companyAddress,companys[_companyAddress].ctiy,_workDate,_salary,false);
         companyAllper[_companyAddress].push(laoborIndex);
         laborIndexPer[_id].push(laobarIndex);
+        laodAllCom[msg.sender].push(_companyAddress);
+        staffs[_companyAddress].push(_id);
+        laborIndex++;
+    }
 
+    function getLaodAllCompany() public returns(address[] memory){
+        return laodAllCom[msg.sender];
+    };
+
+    function getCompanyAllper(address _companyAddress) public returns(uint[] memory){
+        return companyAllper[_companyAddress];
+    }
+
+    function getLaborIndexPer(uint _id)public returns(uint[] memory){
+        return laborIndexPer[_id];
+    }
+
+    function getLaborInfo(uint _laborIndex) public returns(uint,address,string memory,uint,uint,bool){
+        LaborInfo memory laborInfo=laborInfos[_laborIndex];
+        return (laborInfo.id,laborInfo.companyAddress,laborInfo.ctiy,laborInfo.workDate,laborInfo.salary,laborInfo.isInsurance);
     }
 
     function removeStaffById(uint[] _staffs,uint _id) public returns (uint[]){ //覆盖删除法
