@@ -141,6 +141,20 @@ contract MainContract{
     // function getStaffs() public view returns (uint[] memory) {
     //     return staffs[msg.sender];
     // }
+    mapping(uint => uint[]) PayMents;
+    mapping(uint => PaymentRecord) PayMentInfo;
+    uint PayMentIndex = 0;
+    function PayMent(uint _id,uint salay,uint insuranceDate,uint paymentDate) public {
+        uint index = PayMentIndex + 1;
+        PayMents[_id].push(index);
+        PensionAccount memory account = PensionAccounts[_id];
+        SocialSecDept memory social = SocialSecDepts[account.city];
+        uint Cmoney = salay * social.companyRate;
+        uint Omoney = salay * social.personalRate;
+        PayMentInfo[index] = PaymentRecord(_id,account.company,social.socialSecurityAddr,account.city,salay,Omoney,Cmoney,insuranceDate,paymentDate);
+
+    }
+    
 
     //------------------------------------养老保险账号------------------------------------
     mapping(uint => PensionAccount) public PensionAccounts; //根据id获取或者创建养老保险账户
