@@ -123,7 +123,7 @@ contract MainContract{
         ownerApplication[_id].status = 2;
     }
     function acceptTransfer(uint256 _id) public {
-         require(keccak256(abi.encodePacked(ownerApplication[_id].toSocialSecDept))==keccak256(abi.encodePacked(msg.sender)),"只有转出地社保局才能批准");
+        require(keccak256(abi.encodePacked(ownerApplication[_id].toSocialSecDept))==keccak256(abi.encodePacked(msg.sender)),"只有转出地社保局才能批准");
         require(ownerApplication[_id].id != uint256(0), "申请不存在");
         require(ownerApplication[_id].status==2, "转出社保局未批准");
         require(ownerApplication[_id].status!=3, "社保局已接收");
