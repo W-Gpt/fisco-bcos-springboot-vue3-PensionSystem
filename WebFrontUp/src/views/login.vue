@@ -9,17 +9,21 @@
         <el-form-item label="密码" prop="password" class="login-form-item">
           <el-input v-model="loginForm.password" placeholder="请输入密码" show-password></el-input>
         </el-form-item>
-        <el-form-item class="login-form-item">
-          <el-button type="primary" class="login-submit-btn" @click="submitForm">登录</el-button>
-        </el-form-item>
-      </el-form>
+        <el-from-item>
+           <div class="login-register-item">
+            <el-button type="primary" class="login-register-btn" @click="login">登录</el-button>
+            <el-button type="primary" class="login-register-btn" @click="registerTo">注册</el-button>
+          </div>
+        </el-from-item>
+      </el-form>  
+       
     </div>
   </div>
 </template>
 
 <script>
 import { ref } from 'vue';
-import { ElForm, ElFormItem, ElInput, ElButton } from 'element-plus';
+// import { ElForm, ElFormItem, ElInput, ElButton } from 'element-plus';
 import request from '@/utils/request';
 
 export default {
@@ -28,14 +32,22 @@ export default {
       
     }
   },
-  components: {
-    ElForm,
-    ElFormItem,
-    ElInput,
-    ElButton
-  },
+  
   methods:{
-
+    login(){
+      console.log("ea easd")
+      refs.loginForm.validate((valid) => {
+        if (valid) {
+          alert('登录成功');
+          // 此处可添加登录逻辑
+        } else {
+          return false;
+        }
+      });
+    },
+    registerTo(){
+      this.$router.push('/reister');
+    }
   },
   setup() {
     const loginForm = ref({
@@ -51,22 +63,9 @@ export default {
         { required: true, message: '请输入密码', trigger: 'blur' }
       ]
     };
-
-    const submitForm = () => {
-      refs.loginForm.validate((valid) => {
-        if (valid) {
-          alert('登录成功');
-          // 此处可添加登录逻辑
-        } else {
-          return false;
-        }
-      });
-    };
-
     return {
       loginForm,
-      rules,
-      submitForm
+      rules
     };
   }
 };
@@ -94,11 +93,15 @@ export default {
     margin-top: 20px;
   }
 
-  .login-form-item {
+  .login-register-item {
     margin-bottom: 20px;
+    justify-content: center;
+    align-items: center;
+    display: flex 
   }
 
-  .login-submit-btn {
-    width: 100%;
+  .login-register-btn{
+    width: 35%;
+    margin-left:50px;
   }
 </style>
