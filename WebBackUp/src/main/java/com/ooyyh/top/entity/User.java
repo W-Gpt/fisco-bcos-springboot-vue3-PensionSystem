@@ -18,11 +18,8 @@ public class User {
     //养老保险账号参数
     private String id;
     //---劳动局参数---
-    @TableField("labor_address")
-    private String laborAddress;
-    //---社保局参数---
-    @TableField("social_address")
-    private String socialAddress;
+    @TableField("address")
+    private String address;
     @TableField("max_base")
     private String maxBase;
     @TableField("min_base")

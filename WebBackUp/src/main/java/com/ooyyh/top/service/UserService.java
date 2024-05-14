@@ -36,12 +36,12 @@ public class UserService {
             JSONObject responseData = (JSONObject) JSONObject.parse(data);
             System.out.println(responseData.get("transactionIndex"));
             Map result = new HashMap();
-            if (responseData.get("transactionIndex") == "0x0"){
+            if (!(Boolean)responseData.get("statusOK")){
                 result.put("code","500");
                 result.put("msg",responseData.get("message"));
                 result.put("data",null);
                 return result;
-            } else if (responseData.get("transactionIndex") == "0x1"){
+            } else {
                 result.put("code","200");
                 result.put("msg","注册成功");
                 result.put("data",null);
@@ -49,17 +49,17 @@ public class UserService {
                 return result;
             }
         } else if ("2".equals(user.getUserType())) {
-            funcParam.add(user.getLaborAddress());
+            funcParam.add(user.getAddress());
             funcParam.add(user.getCity());
             String data = HttpUtils.commonReq("regLaodongRoles", funcParam);
             JSONObject responseData = (JSONObject) JSONObject.parse(data);
             Map result = new HashMap();
-            if (responseData.get("transactionIndex") == "0x0"){
+            if (!(Boolean)responseData.get("statusOK")){
                 result.put("code","500");
                 result.put("msg",responseData.get("message"));
                 result.put("data",null);
                 return result;
-            } else if (responseData.get("transactionIndex") == "0x1"){
+            } else {
                 result.put("code","200");
                 result.put("msg","注册成功");
                 result.put("data",null);
@@ -68,7 +68,7 @@ public class UserService {
             }
         } else if ("3".equals(user.getUserType())) {
             funcParam.add(user.getCity());
-            funcParam.add(user.getSocialAddress());
+            funcParam.add(user.getAddress());
             funcParam.add(user.getMaxBase());
             funcParam.add(user.getMinBase());
             funcParam.add(user.getPersonalRate());
@@ -76,12 +76,12 @@ public class UserService {
             String data = HttpUtils.commonReq("addSocialSecDept", funcParam);
             JSONObject responseData = (JSONObject) JSONObject.parse(data);
             Map result = new HashMap();
-            if (responseData.get("transactionIndex") == "0x0"){
+            if (!(Boolean)responseData.get("statusOK")){
                 result.put("code","500");
                 result.put("msg",responseData.get("message"));
                 result.put("data",null);
                 return result;
-            } else if (responseData.get("transactionIndex") == "0x1"){
+            } else {
                 result.put("code","200");
                 result.put("msg","注册成功");
                 result.put("data",null);
@@ -92,7 +92,7 @@ public class UserService {
             // 处理未知的用户类型
             throw new IllegalArgumentException("未知的用户类型: " + user.getUserType());
         }
-        return null;
+
     }
     public Map login(User user){
         Map result = new HashMap();
@@ -100,7 +100,7 @@ public class UserService {
         queryWrapper.eq("username", user.getUsername()); //首先有这个人
         User info = userMapper.selectOne(queryWrapper);
         if (info != null) {
-            if (info.getUserType() == user.getUserType()) {
+            if (info.getUserType().equals(user.getUserType()) ) {
                 if (info.getPassword().equals(user.getPassword())) {
                     result.put("code","200");
                     result.put("msg","登录成功");
@@ -116,13 +116,15 @@ public class UserService {
                 result.put("code","500");
                 result.put("msg","用户类型错误");
                 result.put("data",null);
+                return result;
             }
         } else {
             result.put("code","500");
             result.put("msg","用户不存在");
             result.put("data",null);
+            return result;
         }
-        return null;
+
 
     }
 }
