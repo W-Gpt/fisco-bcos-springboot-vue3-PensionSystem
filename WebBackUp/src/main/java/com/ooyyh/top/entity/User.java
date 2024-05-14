@@ -1,6 +1,7 @@
 package com.ooyyh.top.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ public class User {
     //---公共参数---
     @TableField("user_type")
     private String userType;
+    @TableId("username")
     private String username;
     private String password;
     private String city;
