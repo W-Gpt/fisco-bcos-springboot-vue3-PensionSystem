@@ -95,7 +95,7 @@ contract MainContract{
     mapping(address => address[]) AllCompany;//socialSecurityAddr =》 companies 该社保机构里的所有公司
     mapping(address => Company) CompanyByAddr;//Companyaddress => Company
     function addSocialSecDept(string _city,address _socialSecurityAddr,uint _maxBase,uint minBase,uint personalRate,uint companyRate) public{
-        require(owner == msg.sender,"只有合约拥有者才能添加社保局");
+        // require(owner == msg.sender,"只有合约拥有者才能添加社保局");
         require(SocialSecDeptRoles[_socialSecurityAddr] == false,"社保局已存在。");
         SocialSecDepts[_socialSecurityAddr]= SocialSecDept(_city,_socialSecurityAddr,_maxBase,minBase,personalRate,companyRate); // 添加部门
         SocialSecDeptRoles[_socialSecurityAddr]=true; // 添加角色
