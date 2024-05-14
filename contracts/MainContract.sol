@@ -158,7 +158,7 @@ contract MainContract{
     function getPerByCompany(address _companyAddress) view public returns(uint[] memory){
         return staffs[_companyAddress];
     }
-
+    //获得公司下指定人的工作信息
     function getLaIndexForC(address _companyAddress,uint _id) view public returns(uint){
         for(uint i=0; i<companyAllper[_companyAddress].length; i++){
             laborInfos[companyAllper[_companyAddress][i]].id;
@@ -193,6 +193,7 @@ contract MainContract{
         PensionAccount memory account = PensionAccounts[_id];
         require(keccak256(abi.encodePacked(account.company))==keccak256(abi.encodePacked(msg.sender)),"你不是该账户雇主");
         SocialSecDept memory social = SocialSecDepts[citys[account.city].socialSecurityAddr];
+         salay = salay > social.maxBase ? social.maxBase : (salay < social.minBase ? social.minBase : salay);
         uint Cmoney = salay * social.companyRate;
         uint Omoney = salay * social.personalRate;
         uint Tmoney = Cmoney + Omoney;
