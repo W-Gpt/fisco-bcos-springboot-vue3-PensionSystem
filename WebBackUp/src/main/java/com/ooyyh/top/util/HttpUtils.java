@@ -50,7 +50,7 @@ public class HttpUtils {
 
     private static OkHttpClient client = new OkHttpClient();
 
-    private static String commonReq(String funcName, List funcParam) {
+    public static String commonReq(String funcName, List funcParam) {
         return HttpUtils.commonReq(ownerAddress,funcName,funcParam);
     }
     /**
@@ -63,7 +63,7 @@ public class HttpUtils {
      * @author huangyu@ivinsight.com
      * @date 2022/7/1
      */
-    static private String commonReq(String userAddress, String funcName, List funcParam) {
+    public static String commonReq(String userAddress, String funcName, List funcParam) {
         JSONArray abiJSON = JSON.parseArray(contractAbi);
         JSONObject data = new JSONObject();
         data.put("groupId", "1");
@@ -89,8 +89,8 @@ public class HttpUtils {
             return response.body().string();
         }catch (IOException exception){
             System.out.println(exception.getMessage());
+            return exception.getMessage();
         }
-        return null;
     }
 
     /**

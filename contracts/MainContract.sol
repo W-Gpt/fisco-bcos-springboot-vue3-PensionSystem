@@ -95,7 +95,7 @@ contract MainContract{
     mapping(address => address[]) AllCompany;//socialSecurityAddr =》 companies 该社保机构里的所有公司
     mapping(address => Company) CompanyByAddr;//Companyaddress => Company
     function addSocialSecDept(string _city,address _socialSecurityAddr,uint _maxBase,uint minBase,uint personalRate,uint companyRate) public{
-        require(owner == msg.sender,"只有合约拥有者才能添加社保局");
+        // require(owner == msg.sender,"只有合约拥有者才能添加社保局");
         require(SocialSecDeptRoles[_socialSecurityAddr] == false,"社保局已存在。");
         SocialSecDepts[_socialSecurityAddr]= SocialSecDept(_city,_socialSecurityAddr,_maxBase,minBase,personalRate,companyRate); // 添加部门
         SocialSecDeptRoles[_socialSecurityAddr]=true; // 添加角色
@@ -123,7 +123,7 @@ contract MainContract{
         ownerApplication[_id].status = 2;
     }
     function acceptTransfer(uint256 _id) public {
-         require(keccak256(abi.encodePacked(ownerApplication[_id].toSocialSecDept))==keccak256(abi.encodePacked(msg.sender)),"只有转出地社保局才能批准");
+        require(keccak256(abi.encodePacked(ownerApplication[_id].toSocialSecDept))==keccak256(abi.encodePacked(msg.sender)),"只有转出地社保局才能批准");
         require(ownerApplication[_id].id != uint256(0), "申请不存在");
         require(ownerApplication[_id].status==2, "转出社保局未批准");
         require(ownerApplication[_id].status!=3, "社保局已接收");
