@@ -1,7 +1,7 @@
 import axios from 'axios'
 const request = axios.create({
 	// baseURL: 'http://111.67.201.180',
-	baseURL: 'http://localhost:8080',
+	baseURL: 'http://192.168.47.100:8080',
 	timeout: 5000
 })
 
@@ -10,6 +10,8 @@ const request = axios.create({
 //比如统一加入token，对请求进行加密
 request.interceptors.request.use(config => {
 	config.headers['Content-Type'] = 'application/json;charset=utf-8';
+	config.headers['Token']=localStorage.getItem('username');
+	config.headers['userAddress']=localStorage.getItem('userAddress');
 	return config
 },	error =>{
 	return Promise.reject(error)

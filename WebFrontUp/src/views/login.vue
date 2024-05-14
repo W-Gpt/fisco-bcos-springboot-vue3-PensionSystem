@@ -2,59 +2,97 @@
   <div class="login-center">
     <div class="login-container">
       <h2 style="text-align: center;">Forya养老保险系统</h2>
-      <el-form :model="loginForm" ref="loginForm" class="login-form" :rules="rules" label-width="80px">
-        <el-form-item label="用户名" prop="username" class="login-form-item">
+      <el-form :model="this.loginForm" class="login-form"  label-width="auto">
+        <el-form-item label="用户名" prop="username" class="login-form-item" v-if="loginForm.userType!='4'">
           <el-input v-model="loginForm.username" placeholder="请输入用户名"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password" class="login-form-item">
-          <el-input v-model="loginForm.password" placeholder="请输入密码" show-password></el-input>
+        <el-form-item label="密码" prop="password" class="login-form-item" v-show="loginForm.userType!='4'">
+          <el-input v-model="this.loginForm.password" placeholder="请输入密码" show-password></el-input>
         </el-form-item>
-        <el-from-item>
-           <div class="login-register-item">
+        <el-form-item label="区块链地址" v-show="loginForm.userType=='4'">
+          <el-input v-model="this.gongan" />
+        </el-form-item>
+        <el-form-item label="用户类型" prop="userType" >
+            <el-select v-model="loginForm.userType" placeholder="选择用户">
+                <el-option v-for="item in this.users" :value="item.value" :label="item.label" :key="item.value" />
+            </el-select>
+        </el-form-item>
+        
+        <el-form-item class="login-register-item">
             <el-button type="primary" class="login-register-btn" @click="login">登录</el-button>
-            <el-button type="primary" class="login-register-btn" @click="registerTo">注册</el-button>
-          </div>
-        </el-from-item>
-      </el-form>  
-       
+            <el-button type="success" class="login-register-btn" @click="registerTo">注册</el-button>
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
 
 <script>
 import { ref } from 'vue';
-// import { ElForm, ElFormItem, ElInput, ElButton } from 'element-plus';
+import { ElForm, ElFormItem, ElInput, ElButton } from 'element-plus';
 import request from '@/utils/request';
 
 export default {
   data(){
     return{
-      
+      gongan:''
     }
   },
-  
+  components: {
+    ElForm,
+    ElFormItem,
+    ElInput,
+    ElButton
+  },
   methods:{
     login(){
-      console.log("ea easd")
-      refs.loginForm.validate((valid) => {
-        if (valid) {
-          alert('登录成功');
-          // 此处可添加登录逻辑
-        } else {
-          return false;
+      if(this.loginForm.userType=="4"){
+        console.log("nihao")
+        localStorage.setItem('userAddress',this.gongan);
+        this.$router.push('/gongan');
+        this.$message({
+            type:"success",
+            message:"登录成功"
+            })
+      }else{
+        request.post('/user/login',this.loginForm).then((res)=>{
+        if(res.code==200){
+          this.$message({
+            type:"success",
+            message:res.msg
+            })
+           localStorage.setItem('username',this.loginForm.username);
+           localStorage.setItem('userType',this.loginForm.userType);
+        }else{
+          this.$message({
+            type:"warning",
+            message:res.msg
+            })
         }
-      });
+        console.log(res);
+      })
+      }
+      
+      // console.log("ea easd")
+      // this.$refs.loginForm.validate((valid) => {
+      //   if (valid) {
+      //     alert('登录成功');
+      //     // 此处可添加登录逻辑
+      //   } else {
+      //     return false;
+      //   }
+      // });
     },
     registerTo(){
-      this.$router.push('/reister');
+      this.$router.push('/register');
     }
   },
   setup() {
-    const loginForm = ref({
+    const loginForm =ref({
       username: '',
       password: ''
     });
-
+    // const gongan="";
     const rules = {
       username: [
         { required: true, message: '请输入用户名', trigger: 'blur' }
@@ -65,7 +103,15 @@ export default {
     };
     return {
       loginForm,
-      rules
+      rules,
+      // gongan,
+      users:[{value:'1',
+            label:'普通个人'},
+            {value:'2',
+            label:'劳动局'},
+        {value:'3',label:'社保局'},
+      {value:'4',label:'公安'},
+      {value:'5',label:'公司'}]
     };
   }
 };
