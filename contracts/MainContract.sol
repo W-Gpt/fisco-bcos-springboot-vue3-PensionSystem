@@ -246,14 +246,15 @@ contract MainContract{
     address security;
     constructor() public {
         owner = msg.sender; // 将合约部署者设置为合约拥有者
+        security=msg.sender;
         laborIndex=1;
     }
     //基本构思City结构体 => 三个角色
     // 设置公安局总局账号
-    function setSecurity(address _security) public {
-        require(msg.sender == owner);
-        security = _security;
-    }
+    // function setSecurity(address _security) public {
+    //     require(msg.sender == owner);
+    //     security = _security;
+    // }
     function addPerson(uint _id,uint _age,string _name) public {
         require(msg.sender == security);
         PersonById[_id] = PersonalInfo(_id,_age,_name);
