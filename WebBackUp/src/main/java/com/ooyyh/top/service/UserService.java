@@ -7,7 +7,6 @@ import com.ooyyh.top.entity.User;
 import com.ooyyh.top.util.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -124,7 +123,6 @@ public class UserService {
             result.put("data",null);
             return result;
         }
-
-
     }
+
 }
