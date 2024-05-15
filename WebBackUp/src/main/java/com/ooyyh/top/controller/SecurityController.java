@@ -25,7 +25,7 @@ public class SecurityController {
     }
     @GetMapping(value = "/getAllPerson")
     @ResponseBody
-    public List<Person> getAllPerson(@RequestHeader String userAddress){
+    public Map getAllPerson(@RequestHeader String userAddress){
         return securityService.getAllPerson(userAddress);
     }
 }
