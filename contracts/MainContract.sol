@@ -205,6 +205,7 @@ contract MainContract{
         PensionAccounts[_id]=account;
         //是否参保 为其缴费变为true 获得该公司某个人的工作信息
         laborInfos[getLaIndexForC(msg.sender,_id)].isInsurance=true;
+        CompanyByAddr[msg.sender].balance-=Cmoney;
     }
     
     function getPayMentByIndex(uint _payMentIndex) view public returns (uint,address,address,string memory,uint,uint,uint,uint,uint,uint,uint,uint){

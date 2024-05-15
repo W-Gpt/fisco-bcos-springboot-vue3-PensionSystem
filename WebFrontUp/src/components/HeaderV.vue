@@ -4,7 +4,7 @@
       <div style="margin-right: 20px;">
         <img class="logo" src="../assets/logo.jfif">
       </div>
-      <span><h2 style="color:black;">养老保险系统平台</h2></span>
+      <span><h2 style="color:black;">区块链养老保险系统平台</h2></span>
       <span style="position: absolute;right: 0;margin-right: 10px;">当前身份：{{this.username}} <el-button @click="toBack">注销</el-button></span>
     </el-header>
 </template>
@@ -23,6 +23,7 @@ export default {
       toBack(){
         localStorage.removeItem('username');
         localStorage.removeItem('userAddress');
+        localStorage.removeItem('userType');
         this.$router.push('/');
       },
       load(){
