@@ -63,6 +63,10 @@ export default {
             })
            localStorage.setItem('username',this.loginForm.username);
            localStorage.setItem('userType',this.loginForm.userType);
+           if(this.loginForm.userType=="3"){
+            console.log("zaizhe");
+              this.$router.push('/SocialSDeptHome');
+           }
         }else{
           this.$message({
             type:"warning",

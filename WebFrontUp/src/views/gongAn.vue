@@ -62,7 +62,7 @@ export default {
     getPersonalList(){
       request.get('/security/getAllPerson').then((res)=>{
         console.log(res);
-        this.PersonalList=res;
+        this.PersonalList=res.data;
         console.log(this.PersonalList[2]);
       })
     },
@@ -102,9 +102,7 @@ export default {
 header{
   padding: 0;
 }
-.el-menu-demo{
-height: 500px;
-}
+
 
 </style>
 
