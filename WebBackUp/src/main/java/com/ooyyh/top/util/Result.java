@@ -15,6 +15,14 @@ public class Result {
         result.put("data",data);
         return result;
     }
+    public static Map success( Object data){
+
+        Map result = new HashMap();
+        result.put("code","200");
+        result.put("msg","success");
+        result.put("data",data);
+        return result;
+    }
     public static Map success(String code, String msg){
         Map result = new HashMap();
         result.put("code",code);

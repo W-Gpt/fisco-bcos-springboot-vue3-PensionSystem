@@ -94,33 +94,5 @@ public class SocialSecService {
         result.put("data", companyList);
         return result;
     }
-    public Map payInsurance(String token, Insurance insurance) throws UnsupportedEncodingException {
-        String tokenT = URLDecoder.decode(token, "UTF-8");
-        QueryWrapper<Company> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("company_name",tokenT);
-        Company company = companyMapper.selectOne(queryWrapper);
-        List funcParam = new ArrayList();
-        funcParam.add(insurance.getId());
-        funcParam.add(insurance.getSalary());
-        funcParam.add(insurance.getInsuranceDate());
-//        funcParam.add(insurance.getPaymentDate());
-        JSONObject response = (JSONObject) JSONObject.parse(HttpUtils.commonReq(company.getCompanyAddress(),"PayMent",funcParam));
-        //构建一个当前时间
-        Date date = new Date();
-        Long currentTime = date.getTime();
-        //get社保局信息
-        QueryWrapper<User> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper1.eq("city",company.getCity());
-        User socialSec = userMapper.selectOne(queryWrapper1);
-        insurance.setPaymentDate(currentTime.toString());//设置缴费的时间
-        insurance.setCompanyAddress(company.getCompanyAddress());
-        insurance.setSocialSecurityAddr(socialSec.getAddress());
-        insurance.setPaymentBase(insurance.getSalary());
-        insurance.setPersonalRate(socialSec.getPersonalRate());
-        insurance.setCompanyRate(socialSec.getCompanyRate());
-        insurance.setPersonalPayments(String.valueOf(Integer.parseInt(insurance.getSalary()) * Integer.parseInt(socialSec.getPersonalRate()) / 100));
-        insurance.setCompanyPayments(String.valueOf(Integer.parseInt(insurance.getSalary()) * Integer.parseInt(socialSec.getCompanyRate()) / 100));
-        insuranceMapper.insert(insurance);
-        return Result.success();
-    }
+
 }
