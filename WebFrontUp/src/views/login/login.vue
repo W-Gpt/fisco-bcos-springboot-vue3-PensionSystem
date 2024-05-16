@@ -6,10 +6,10 @@
         <el-form-item label="用户名" prop="username" class="login-form-item" v-if="loginForm.userType!='4'">
           <el-input v-model="loginForm.username" placeholder="请输入用户名"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password" class="login-form-item" v-show="loginForm.userType!='4'">
+        <el-form-item label="密码" prop="password" class="login-form-item" v-show="loginForm.userType!='4' || loginForm.userType!='5'">
           <el-input v-model="this.loginForm.password" placeholder="请输入密码" show-password></el-input>
         </el-form-item>
-        <el-form-item label="区块链地址" v-show="loginForm.userType=='4'">
+        <el-form-item label="区块链地址" v-show="loginForm.userType=='4' || loginForm.userType=='5'">
           <el-input v-model="this.gongan" />
         </el-form-item>
         <el-form-item label="用户类型" prop="userType" >
@@ -66,6 +66,14 @@ export default {
            if(this.loginForm.userType=="3"){
             console.log("zaizhe");
               this.$router.push('/SocialSDeptHome');
+           }
+           if(this.loginForm.userType=="2"){
+            console.log("zaizhe");
+              this.$router.push('/laborHome');
+           }
+           if(this.loginForm.userType=="5"){
+            console.log("zaizhe");
+              this.$router.push('/companyHome');
            }
         }else{
           this.$message({

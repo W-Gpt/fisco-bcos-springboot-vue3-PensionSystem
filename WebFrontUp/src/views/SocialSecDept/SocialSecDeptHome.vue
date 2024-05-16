@@ -4,7 +4,7 @@
             <el-header><HeaderV></HeaderV></el-header>
             <el-container>
                 <el-aside>
-                    <el-menu  router  default-active="allCompany" class="el-menu-vertical-demo">
+                    <el-menu  router  default-active="allCompany" class="el-menu-vertical-demo" style="height:calc(100vh - 60px);">
                         <el-menu-item v-for="item in this.tabList" :router="item.path" style="justify-content: center" :index="item.name">
                             {{ item.meta.title }}
                         </el-menu-item>

@@ -4,7 +4,7 @@
         <el-header><HeaderV /></el-header>
         <el-container >
           <el-aside width="200px" >
-            <el-menu router class="el-menu-demo" default-active="companyInfo" style="height:calc(100vh - 60px);">
+            <el-menu router class="el-menu-demo" default-active="insuredPerson" style="height:calc(100vh - 60px);">
               <el-menu-item v-for="item in this.tabList" :router="item.path" style="justify-content: center" :index="item.name">
                  {{ item.meta.title }}
               </el-menu-item>
@@ -27,7 +27,7 @@
     data(){
       return{
        
-        tabList:router.options.routes[4].children
+        tabList:router.options.routes[5].children
       }
     },
     mounted(){

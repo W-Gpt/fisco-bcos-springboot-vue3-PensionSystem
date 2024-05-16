@@ -22,6 +22,7 @@ const router = createRouter({
     {
       path:'/SocialSDeptHome',
       name:'SocialSDeptHome',
+      redirect:'/allCompany',
       component:()=>import('../views/SocialSecDept/SocialSecDeptHome.vue'),
       children:[
         {
@@ -60,12 +61,53 @@ const router = createRouter({
     },{
       path:'/laborHome',
       name:'laborHome',
+      redirect:'/companyInfo',
       component:()=>import('../views/labor/laborHome.vue'),
       children:[
         {
-          path:'/personInfo',
-          name:'personInfo',
-          component:()=>import('../views/labor/laborHome.vue'),
+          path:'/companyInfo',
+          name:'companyInfo',
+          component:()=>import('../views/labor/companyInfo.vue'),
+          meta:{
+            title:'公司列表'
+          }
+        },
+        {
+          path:'/laborInfo',
+          name:'laborInfo',
+          component:()=>import('../views/labor/laborInfo.vue'),
+          meta:{
+            title:'工作信息列表'
+          }
+        }
+      ]
+    },{
+      path:'/companyHome',
+      name:'companyHome',
+      redirect:'/insuredPerson',
+      component:()=>import('../views/company/companyHome.vue'),
+      children:[
+        {
+          path:"/insuredPerson",
+          name:'insuredPerson',
+          component:()=>import('../views/company/insuredPerson.vue'),
+          meta:{
+            title:'参保人员'
+          }
+        },{
+          path:"/uninsuredPer",
+          name:'uninsuredPer',
+          component:()=>import('../views/company/unInsuredPer.vue'),
+          meta:{
+            title:'未参保人员'
+          }
+        },{
+          path:"/leavePer",
+          name:'leavePer',
+          component:()=>import('../views/company/leavePer.vue'),
+          meta:{
+            title:'离职人员信息'
+          }
         }
       ]
     }
