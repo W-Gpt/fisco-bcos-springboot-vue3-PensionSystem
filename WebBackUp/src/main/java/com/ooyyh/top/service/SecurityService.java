@@ -6,6 +6,7 @@ import com.ooyyh.top.dao.SecurityMapper;
 import com.ooyyh.top.entity.Person;
 import com.ooyyh.top.entity.User;
 import com.ooyyh.top.util.HttpUtils;
+import com.ooyyh.top.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -74,14 +75,14 @@ public class SecurityService {
 //        return userList;
 //    }
 
-    public List<Person> getAllPerson(String userAddress) {
+    public Map getAllPerson(String userAddress) {
         Map result = new HashMap();
         List<Person> userList = new ArrayList<Person>();
         List funcParam = new ArrayList();
         String data = HttpUtils.commonReq(userAddress,"getAllPersonId",funcParam);
         System.out.println(data); // data => [1,2]
         List<String> idList = Arrays.asList((data.substring(3, data.length() - 3)).split(","));
-        System.out.println(idList.get(1));
+//        System.out.println(idList.get());
         for (int i = 0; i < idList.size(); i++) {
             System.out.println(i);
             QueryWrapper<Person> queryWrapper = new QueryWrapper<Person>();
@@ -89,7 +90,10 @@ public class SecurityService {
             Person onUser = securityMapper.selectOne(queryWrapper);
             userList.add(onUser);
         }
-        return userList;
+        result.put("code","200");
+        result.put("msg","查询成功");
+        result.put("data",userList);
+        return result;
 
 
     }
