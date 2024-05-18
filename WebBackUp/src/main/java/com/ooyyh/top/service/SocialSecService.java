@@ -1,5 +1,6 @@
 package com.ooyyh.top.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ooyyh.top.dao.CompanyMapper;
@@ -8,6 +9,7 @@ import com.ooyyh.top.dao.UserMapper;
 import com.ooyyh.top.entity.Company;
 import com.ooyyh.top.entity.Insurance;
 import com.ooyyh.top.entity.User;
+import com.ooyyh.top.util.ColorFul;
 import com.ooyyh.top.util.HttpUtils;
 import com.ooyyh.top.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,5 +96,90 @@ public class SocialSecService {
         result.put("data", companyList);
         return result;
     }
+    public Map getAllInsurance(String companyName) throws UnsupportedEncodingException {
+        String tokenT = URLDecoder.decode(companyName, "UTF-8");
+        QueryWrapper<Company> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("company_name",tokenT);
+        Company company = companyMapper.selectOne(queryWrapper);
+        List funcParam = new ArrayList();
+        funcParam.add(company.getCompanyAddress());
+        String response = HttpUtils.commonReq(company.getCompanyAddress(),"getCompanyPayMentAllIndex",funcParam);
+        if (response.equals("[\"[ ]\"]")) {
+            return Result.error("这个公司没有人缴纳社保");
+        }
+        response = response.substring(3, response.length() - 3);
+
+        List<String> AllIndex = Arrays.asList(response.split(","));
+        JSONArray allInsurance = new JSONArray();
+
+        for (int i = 0; i < AllIndex.size(); i++) {
+            List funcParam1 = new ArrayList();
+            funcParam1.add(AllIndex.get(i).trim());
+            String response1 = HttpUtils.commonReq(company.getCompanyAddress(),"getPayMentByIndex",funcParam1);
+            response1 = response1.substring(2, response1.length() - 2);
+            response1 = response1.replace("\"","");
+            List<String> infoList = Arrays.asList(response1.split(","));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id",infoList.get(0));
+            jsonObject.put("companyAddress",infoList.get(1));
+            jsonObject.put("socialSecurityAddr",infoList.get(2));
+            jsonObject.put("city",infoList.get(3));
+            jsonObject.put("paymentBase",infoList.get(4));
+            jsonObject.put("personalRate",infoList.get(5));
+            jsonObject.put("companyRate",infoList.get(6));
+            jsonObject.put("personalPayments",Integer.parseInt(infoList.get(7)) / 100);
+            jsonObject.put("companyPayments",Integer.parseInt(infoList.get(8)) / 100);
+            jsonObject.put("totalPayments",Integer.parseInt(infoList.get(9)) / 100);
+            jsonObject.put("insuranceDate",infoList.get(10));
+            jsonObject.put("paymentDate",infoList.get(11));
+            allInsurance.add(jsonObject);
+        }
+        ColorFul.print("该公司所有缴费记录已打出=>"+allInsurance.toString(), ColorFul.BLUE);
+        return Result.success(allInsurance);
+
+    }
+//    public JSONArray getAllInsurance(String companyName) throws UnsupportedEncodingException {
+//        String tokenT = URLDecoder.decode(companyName, "UTF-8");
+//        QueryWrapper<Company> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.eq("company_name",tokenT);
+//        Company company = companyMapper.selectOne(queryWrapper);
+//        List funcParam = new ArrayList();
+//        funcParam.add(company.getCompanyAddress());
+//        String response = HttpUtils.commonReq(company.getCompanyAddress(),"getCompanyPayMentAllIndex",funcParam);
+//        if (response.equals("[\"[ ]\"]")) {
+//            return Result.error("这个公司没有人缴纳社保");
+//        }
+//        response = response.substring(3, response.length() - 3);
+//
+//        List<String> AllIndex = Arrays.asList(response.split(","));
+//        JSONArray allInsurance = new JSONArray();
+//
+//        for (int i = 0; i < AllIndex.size(); i++) {
+//            List funcParam1 = new ArrayList();
+//            funcParam1.add(AllIndex.get(i).trim());
+//            String response1 = HttpUtils.commonReq(company.getCompanyAddress(),"getPayMentByIndex",funcParam1);
+//            response1 = response1.substring(2, response1.length() - 2);
+//            response1 = response1.replace("\"","");
+//            List<String> infoList = Arrays.asList(response1.split(","));
+//            JSONObject jsonObject = new JSONObject();
+//            jsonObject.put("id",infoList.get(0));
+//            jsonObject.put("companyAddress",infoList.get(1));
+//            jsonObject.put("socialSecurityAddr",infoList.get(2));
+//            jsonObject.put("city",infoList.get(3));
+//            jsonObject.put("paymentBase",infoList.get(4));
+//            jsonObject.put("personalRate",infoList.get(5));
+//            jsonObject.put("companyRate",infoList.get(6));
+//            jsonObject.put("personalPayments",Integer.parseInt(infoList.get(7)) / 100);
+//            jsonObject.put("companyPayments",Integer.parseInt(infoList.get(8)) / 100);
+//            jsonObject.put("totalPayments",Integer.parseInt(infoList.get(9)) / 100);
+//            jsonObject.put("insuranceDate",infoList.get(10));
+//            jsonObject.put("paymentDate",infoList.get(11));
+//            allInsurance.add(jsonObject);
+//        }
+//        ColorFul.print("该公司所有缴费记录已打出=>"+allInsurance.toString(), ColorFul.BLUE);
+//        return Result.success(allInsurance);
+//
+//    }
+
 
 }
