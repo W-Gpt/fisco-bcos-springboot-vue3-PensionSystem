@@ -42,7 +42,17 @@ export default {
         getAllCompany(){
             request.get('/socialSec/getAllCompany').then((res)=>{
                 console.log(res);
+                for(let i=0;i<res.data.length;i++){
+
+                    request.get('/company/getCompanyByAddr?address='+res.data[i].companyAddress).then((resd)=>{
+                    // console.log(res.data.staffSize);
+                    res.data[i].personNum= resd.data.staffSize;
+                    // res.data[i].personNum= 3;
+                    console.log(res.data[i].personNum)
+                    })  
+                }
                 this.companyList=res.data;
+                console.log(this.companyList)
             })
         },
         add0(value) {
@@ -63,7 +73,7 @@ export default {
             this.dialogVisible=true;
         request.get('/socialSec/getAllPayMentByCompany?companyName='+row.companyName).then((res)=>{
             console.log(res)
-            if(res.cod==200){
+            if(res.code==200){
                 for(let i=0;i<res.data.length;i++){
                     res.data[i].insuranceDate=this.formatDate(Number(res.data[i].insuranceDate));
                     res.data[i].paymentDate=this.formatDate(Number(res.data[i].paymentDate));

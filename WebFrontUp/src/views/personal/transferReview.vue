@@ -40,7 +40,7 @@
             <el-form-item prop="toSocialSecDept" label="转入社保局">
                 <el-input v-model="this.addApplication.toSocialSecDept" placeholder="请输入地址"></el-input>
             </el-form-item>
-            <el-button type="primary" @click="saveApplication" >添加申请</el-button>
+            <el-button type="primary" @click="saveApplication" v-if="this.addApplication.status!='0'">添加申请</el-button>
             <el-button type="primary" @click="addApplications(this.addApplication)" style="float: right;width: 90px;">提交</el-button>
         </el-form>
     </el-dialog>   
@@ -71,15 +71,46 @@ export default {
             this.addApplication.id=localStorage.getItem('userId');
             request.post('/application/saveTransfer',this.addApplication).then((res)=>{
                 console.log(res)
+                if(res.code==200){
+                    if(this.addApplication.status!='0'){
+                        this.getApplication();
+                    }   
+                    
+                    this.$message({
+                        type:'success',
+                        message:res.msg
+                    })
+                }else{
+                    this.getApplication();
+                    this.$message({
+                        type:'warning',
+                        message:res.msg
+                    })
+                }
             })
         },
         addApplications(row){
             if(row.status !='0' ){
                 this.saveApplication();
             }
-            request.post('/application/applyTransfer',row).then((res)=>{
+            setTimeout(
+                request.post('/application/applyTransfer',row).then((res)=>{
                 console.log(res)
-            })
+                if(res.code==200){
+                    this.getApplication();
+                    this.$message({
+                        type:'success',
+                        message:res.msg
+                    })
+                }else{
+                    this.getApplication();
+                    this.$message({
+                        type:'warning',
+                        message:res.msg
+                    })
+                }
+            }),2000)
+            
             this.addApplication={};
         },
         getApplication(){

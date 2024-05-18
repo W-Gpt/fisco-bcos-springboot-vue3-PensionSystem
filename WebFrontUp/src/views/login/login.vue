@@ -77,7 +77,8 @@ export default {
            }
            if(this.loginForm.userType=="5"){
             console.log("zaizhe");
-              this.$router.push('/companyHome');
+            localStorage.setItem('userAddress',this.loginForm.address);
+            this.$router.push('/companyHome');
            }
         }else{
           this.$message({

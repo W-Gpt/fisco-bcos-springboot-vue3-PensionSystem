@@ -10,6 +10,7 @@
             <el-table-column prop="companyAddress" label="公司地址" />
             <el-table-column prop="city" label="公司所在城市" />
             <el-table-column prop="personNum" label="公司员工数" />
+            <!-- <el-table-column prop="balances" label="余额" /> -->
             <!-- <el-table-column label="操作">
                 <el-button type="primary"></el-button>
             </el-table-column> -->
@@ -40,7 +41,8 @@ export default {
         return{
             dialogVisible :false,
             companyInfo:{},
-            companyList:[]
+            companyList:[],
+           
         }
     },
     mounted(){
@@ -48,6 +50,7 @@ export default {
     },
     methods:{
         addCompany(){
+            this.companyInfo.balance=this.companyInfo.balance*100;
             request.post('/socialSec/addCompany',this.companyInfo).then((res)=>{
                 console.log(res);
                 if(res.code==200){
@@ -66,11 +69,21 @@ export default {
 
             this.dialogVisible=false;
             this.companyInfo={}
-        },
+        },  
         getAllCompany(){
             request.get('/socialSec/getAllCompany').then((res)=>{
                 console.log(res);
+                for(let i=0;i<res.data.length;i++){
+
+                    request.get('/company/getCompanyByAddr?address='+res.data[i].companyAddress).then((resd)=>{
+                    // console.log(res.data.staffSize);
+                    res.data[i].personNum= resd.data.staffSize;
+                    // res.data[i].personNum= 3;
+                    console.log(res.data[i].personNum)
+                    })  
+                }
                 this.companyList=res.data;
+                console.log(this.companyList)
             })
         }
     }

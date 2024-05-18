@@ -2,8 +2,8 @@
     <el-row>
         <el-table :data="this.laborInfoList" style="width: 100%" border>
                   <el-table-column  label="身份证号" prop="id" />
-                  <el-table-column  label="姓名" prop="name" />
-                  <el-table-column  label="年龄" prop="age" />
+                  <!-- <el-table-column  label="姓名" prop="name" />
+                  <el-table-column  label="年龄" prop="age" /> -->
                   <el-table-column  label="参加工作时间" prop="workDate" />
                   <el-table-column  label="工资" prop="salary" />
                   <el-table-column label="操作">
@@ -60,9 +60,12 @@ export default {
         request.get('/company/getAllLaborByCompany').then((res)=>{
           console.log(res);
           for(let i=0;i<res.data.length;i++){
-                    res.data[i].workDate=this.formatDate(Number(res.data[i].workDate));
-                }
-          this.laborInfoList=res.data;
+              if(res.data[i].isSponsored=="true"){
+                this.laborInfoList.push(res.data[i]);
+                // console.log(res.data[i]);
+                res.data[i].workDate=this.formatDate(Number(res.data[i].workDate));
+              }   
+           }
         })
       },
       getHistory(row){

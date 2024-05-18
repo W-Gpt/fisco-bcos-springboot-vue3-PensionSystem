@@ -53,7 +53,19 @@ export default {
         getAllCompany(){
             request.get('/company/getAllCompany').then((res)=>{
                 console.log(res);
+                for(let i=0;i<res.data.length;i++){
+
+                    request.get('/company/getCompanyByAddr?address='+res.data[i].companyAddress).then((resd)=>{
+                    // console.log(res.data.staffSize);
+                    res.data[i].personNum= resd.data.staffSize;
+                    // res.data[i].personNum= 3;
+                    console.log(res.data[i].personNum)
+                    })  
+                }
                 this.companyList=res.data;
+                console.log(this.companyList)
+                // console.log(res);
+                // this.companyList=res.data;
             })
         },
         
