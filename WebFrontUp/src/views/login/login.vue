@@ -6,11 +6,11 @@
         <el-form-item label="用户名" prop="username" class="login-form-item" v-if="loginForm.userType!='4'">
           <el-input v-model="loginForm.username" placeholder="请输入用户名"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password" class="login-form-item" v-show="loginForm.userType!='4' || loginForm.userType!='5'">
+        <el-form-item label="密码" prop="password" class="login-form-item" v-show="loginForm.userType!='4' && this.loginForm.userType!='5'">
           <el-input v-model="this.loginForm.password" placeholder="请输入密码" show-password></el-input>
         </el-form-item>
         <el-form-item label="区块链地址" v-show="loginForm.userType=='4' || loginForm.userType=='5'">
-          <el-input v-model="this.gongan" />
+          <el-input v-model="this.loginForm.address" />
         </el-form-item>
         <el-form-item label="用户类型" prop="userType" >
             <el-select v-model="loginForm.userType" placeholder="选择用户">
@@ -48,7 +48,7 @@ export default {
     login(){
       if(this.loginForm.userType=="4"){
         console.log("nihao")
-        localStorage.setItem('userAddress',this.gongan);
+        localStorage.setItem('userAddress',this.loginForm.address);
         this.$router.push('/gongan');
         this.$message({
             type:"success",
@@ -70,6 +70,10 @@ export default {
            if(this.loginForm.userType=="2"){
             console.log("zaizhe");
               this.$router.push('/laborHome');
+           }
+           if(this.loginForm.userType=="1"){
+            console.log("zaizhe");
+              this.$router.push('/personHome');
            }
            if(this.loginForm.userType=="5"){
             console.log("zaizhe");

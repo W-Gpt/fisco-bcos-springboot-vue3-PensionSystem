@@ -75,7 +75,12 @@ export default {
                         message:res.msg
                     })
                     this.dialogVisible=false;
-                }
+                }else{
+                    this.$message({
+                    type:'warning',
+                    message:res.msg
+                    })
+                    }
                 this.laoborInfo.companyName={};
             })
 

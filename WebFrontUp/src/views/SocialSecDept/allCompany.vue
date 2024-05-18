@@ -10,9 +10,9 @@
             <el-table-column prop="companyAddress" label="公司地址" />
             <el-table-column prop="city" label="公司所在城市" />
             <el-table-column prop="personNum" label="公司员工数" />
-            <el-table-column label="操作">
+            <!-- <el-table-column label="操作">
                 <el-button type="primary"></el-button>
-            </el-table-column>
+            </el-table-column> -->
         </el-table>
     </el-row>
     <el-dialog v-model="dialogVisible" title="添加公司" width="700px" style="height:300px">

@@ -2,9 +2,8 @@
     <el-row>
         <el-table :data="this.laborInfoList" style="width: 100%" border>
                   <el-table-column  label="身份证号" prop="id" />
-                  <el-table-column  label="姓名" prop="name" />
-                  <el-table-column  label="年龄" prop="age" />
-                  <el-table-column  label="工作公司" prop="company" />
+                  <el-table-column  label="姓名" prop="username" />
+                  <el-table-column  label="工作公司" prop="companyAddress" />
                   <el-table-column  label="参加工作时间" prop="workDate" />
                   <el-table-column  label="工资" prop="salary" />
                   <!-- <el-table-column label="是否离职">
@@ -36,7 +35,7 @@ export default {
     },
     methods:{
         add0(value) {
-    return value<10?'0'+value:value
+            return value<10?'0'+value:value
         },
         formatDate(value){
         if(value == 0){
@@ -49,7 +48,7 @@ export default {
         var d = time.getDate();
         return y+'-'+this.add0(m)+'-'+this.add0(d)},
         getAllLaborInfo(){
-            request.get('/company/getAllLabor').then((res)=>{
+            request.get('/pension/getLaborInfo').then((res)=>{
                 console.log(res)
                 if(res.code==200){
                     for(let i=0;i<res.data.length;i++){

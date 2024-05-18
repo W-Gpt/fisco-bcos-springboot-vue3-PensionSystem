@@ -92,14 +92,14 @@ const router = createRouter({
           name:'insuredPerson',
           component:()=>import('../views/company/insuredPerson.vue'),
           meta:{
-            title:'参保人员'
+            title:'缴费记录'
           }
         },{
           path:"/uninsuredPer",
           name:'uninsuredPer',
           component:()=>import('../views/company/unInsuredPer.vue'),
           meta:{
-            title:'未参保人员'
+            title:'参保人员状态'
           }
         },{
           path:"/leavePer",
@@ -107,6 +107,45 @@ const router = createRouter({
           component:()=>import('../views/company/leavePer.vue'),
           meta:{
             title:'离职人员信息'
+          }
+        }
+      ]
+    },{
+      path:'/personHome',
+      name:'personHome',
+      redirect:'/myInsurdInfo',
+      component:()=>import('../views/personal/personHome.vue'),
+      children:[
+        {
+          path:'/myInsurdInfo',
+          name:'myInsurdInfo',
+          component:()=>import('../views/personal/myInsurdInfo.vue'),
+          meta:{
+            title:'我的保险信息'
+          }
+        },
+        {
+          path:'/payMentHistory',
+          name:'payMentHistory',
+          component:()=>import('../views/personal/payMentHistory.vue'),
+          meta:{
+            title:'缴费历史'
+          }
+        },
+        {
+          path:'/mylaborInfo',
+          name:'mylaborInfo',
+          component:()=>import('../views/personal/ladorInfo.vue'),
+          meta:{
+            title:'我的工作信息'
+          }
+        },
+        {
+          path:'/myTransferReview',
+          name:'myTransferReview',
+          component:()=>import('../views/personal/transferReview.vue'),
+          meta:{
+            title:'转入转出申请'
           }
         }
       ]
