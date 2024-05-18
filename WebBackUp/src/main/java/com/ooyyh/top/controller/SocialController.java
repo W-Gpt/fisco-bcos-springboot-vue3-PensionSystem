@@ -26,4 +26,10 @@ public class SocialController {
     public Map getAllCompany(@RequestHeader String token) throws UnsupportedEncodingException {
         return socialSecService.getAllCompany(token);
     }
+    @GetMapping(value = "/getAllPayMentByCompany")
+    @ResponseBody
+    public Map getAllPayMentByCompany(String companyName) throws UnsupportedEncodingException {
+        return socialSecService.getAllInsurance(companyName);
+    }
+
 }

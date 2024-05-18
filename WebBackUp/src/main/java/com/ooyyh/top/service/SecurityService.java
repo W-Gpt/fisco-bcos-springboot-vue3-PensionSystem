@@ -34,7 +34,6 @@ public class SecurityService {
             result.put("data",null);
             securityMapper.insert(person);
             return result;
-
         }
     }
 //    public List<Person> getAllPerson(String userAddress) {
