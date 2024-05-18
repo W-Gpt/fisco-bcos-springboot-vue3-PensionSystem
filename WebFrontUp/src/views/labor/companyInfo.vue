@@ -1,0 +1,86 @@
+<template>
+    <el-row>
+        <el-col>
+            <el-table :data="this.companyList"  @row-click="addlaborDialog">
+                <el-table-column prop="companyName" label="公司名称" ></el-table-column>
+                <el-table-column prop="companyAddress" label="公司地址" ></el-table-column>
+                <el-table-column prop="city" label="公司所在城市" ></el-table-column>
+                <el-table-column prop="personNum" label="公司员工数" >
+                </el-table-column>
+                <el-table-column label="添加人员">
+                    <el-button type="success"> 录入人员</el-button>
+                </el-table-column>
+            </el-table>
+        </el-col>
+        
+    </el-row>
+    <el-dialog v-model="this.dialogVisible" title="添加工作信息" style="height: 380px;">
+        <el-form v-model="this.laoborInfo" label-width="auto">
+                  <el-form-item label="身份证号码" prop="id">
+                    <el-input v-model="this.laoborInfo.id" />
+                  </el-form-item>
+                  <el-form-item label="公司名称" prop="companyName">
+                    <el-input v-model="this.laoborInfo.companyName" disabled/>
+                  </el-form-item>
+                  <el-form-item label="公司地址" prop="companyAddress">
+                    <el-input v-model="this.laoborInfo.companyAddress" disabled/>
+                  </el-form-item>
+                  <el-form-item label="工资" prop="salary">
+                    <el-input v-model="this.laoborInfo.salary" />
+                  </el-form-item>
+                  <el-form-item label="工作时间" prop="workDate">
+                    <el-date-picker v-model="this.laoborInfo.workDate" type="datetime" value-format="x" placeholder="选择入职时间" />
+                  </el-form-item>
+                </el-form>
+                <el-button type="primary" style="float: right;" @click="addLaborInfo">录入人员信息</el-button>
+    </el-dialog>
+</template>
+<script>
+import request from './../../utils/request.js'
+export default {
+    data(){
+        
+        return{
+            companyList:[{city:'测试'}],
+            laoborInfo:{},
+            dialogVisible:false,
+        }
+    },
+    mounted(){
+        this.getAllCompany();
+    },
+    methods:{
+        getAllCompany(){
+            request.get('/company/getAllCompany').then((res)=>{
+                console.log(res);
+                this.companyList=res.data;
+            })
+        },
+        
+        addlaborDialog(row){
+            this.laoborInfo.companyAddress=row.companyAddress;
+            this.laoborInfo.companyName=row.companyName;
+            this.dialogVisible=true;
+
+        },
+        addLaborInfo(){
+            // this.laoborInfo.workDate=new Date(this.laoborInfo.workDate);
+            console.log(this.laoborInfo)
+            request.post('/company/addLaborInfo',this.laoborInfo).then((res)=>{
+                console.log(res);
+                // this.$message:
+                if(res.code==200){
+                    this.$message({
+                        type:'success',
+                        message:res.msg
+                    })
+                    this.dialogVisible=false;
+                }
+                this.laoborInfo.companyName={};
+            })
+
+        }
+    }
+    
+}
+</script>
