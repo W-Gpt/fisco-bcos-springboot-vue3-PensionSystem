@@ -4,6 +4,11 @@
         <h2 style="text-align: center;">Forya养老保险系统</h2>
         <h5 style="text-align: center;">注册</h5>
         <el-form :model="registerForm" class="register-form" :rules="rules" label-width="auto">
+          <el-form-item label="用户类型" prop="userType">
+            <el-select v-model="registerForm.userType" placeholder="选择用户">
+                <el-option v-for="item in this.users" :value="item.value" :label="item.label" :key="item.value" />
+            </el-select>
+          </el-form-item>
           <el-form-item label="用户名" prop="username" class="register-item">
             <el-input v-model="registerForm.username" placeholder="请输入用户名"></el-input>
           </el-form-item>
@@ -31,11 +36,11 @@
           <el-form-item label="公司缴费比例" prop="companyRate" v-show="registerForm.userType==3">
             <el-input  v-model="registerForm.companyRate" placeholder="请输入公司缴费比例"></el-input>
           </el-form-item>
-          <el-form-item label="用户类型" prop="userType">
+          <!-- <el-form-item label="用户类型" prop="userType">
             <el-select v-model="registerForm.userType" placeholder="选择用户">
                 <el-option v-for="item in this.users" :value="item.value" :label="item.label" :key="item.value" />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item class="register-item">
             
               <el-button type="primary" class="register-btn" @click="loginTo">返回</el-button>

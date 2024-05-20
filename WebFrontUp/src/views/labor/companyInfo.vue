@@ -41,7 +41,7 @@ export default {
     data(){
         
         return{
-            companyList:[{city:'测试'}],
+            companyList:[],
             laoborInfo:{},
             dialogVisible:false,
         }
