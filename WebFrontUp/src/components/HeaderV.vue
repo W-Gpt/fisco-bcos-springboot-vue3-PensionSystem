@@ -1,6 +1,6 @@
 <template>
     <el-header class="top-box">
-      <span v-show="this.userType=='1'|| this.userType=='5'" style="position: absolute;left: 0;margin-left: 12px;">账户总额:{{ this.balance }}</span>
+      <span v-show="this.userType=='1'|| this.userType=='5'" style="position: absolute;left: 0;margin-left: 12px;">账户总额:{{ balance }}</span>
       <div style="margin-right: 20px;">
         <img class="logo" src="../assets/logo.jfif">
       </div>
@@ -16,9 +16,9 @@ export default {
       return{
         username: "公安总局",
         userType:null,
-        balance:null
       }
     },
+    props:['balance'],
     mounted(){
       this.load();
     },
@@ -34,23 +34,23 @@ export default {
           this.username=localStorage.getItem('username');
         }
         this.userType=localStorage.getItem('userType');
-        if(this.userType=='5'){
-          this.getCompanyInfo()
-        }
-        if(this.userType=='1'){
-          this.getMyInsurance()
-        }
+        // if(this.userType=='5'){
+        //   this.getCompanyInfo()
+        // }
+        // if(this.userType=='1'){
+        //   this.getMyInsurance()
+        // }
       },
-      getMyInsurance(){
-            request.get('/pension/getPensionInfo').then((res)=>{
-                this.balance=res.data.totalPayments;
-            })  
-        },
-      getCompanyInfo(){
-        request.get('/company/getCompanyByAddr?address='+localStorage.getItem('userAddress')).then((res)=>{
-                this.balance=res.data.balances/100;
-            })  
-      }  
+      // getMyInsurance(){
+      //       request.get('/pension/getPensionInfo').then((res)=>{
+      //           this.balance=res.data.totalPayments;
+      //       })  
+      //   },
+      // getCompanyInfo(){
+      //   request.get('/company/getCompanyByAddr?address='+localStorage.getItem('userAddress')).then((res)=>{
+      //           this.balance=res.data.balances/100;
+      //       })  
+      // }  
       
     }
 }

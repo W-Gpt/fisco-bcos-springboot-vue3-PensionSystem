@@ -43,7 +43,7 @@ export default {
         request.get('/company/getAllInsurance').then((res)=>{
             console.log(res)
           for(let i=0;i<res.data.length;i++){
-                    res.data[i].insuranceDate=this.formatDate(Number(res.data[i].insuranceDate));
+                    // res.data[i].insuranceDate=this.formatDate(Number(res.data[i].insuranceDate));
                     res.data[i].paymentDate=this.formatDate(Number(res.data[i].paymentDate));
            }
           this.paymentHistoryList=res.data

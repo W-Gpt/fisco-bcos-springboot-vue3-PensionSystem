@@ -57,7 +57,8 @@ export default {
           dialogVisible:false,
           addPayMentInfo:{},
           dialogHistory:false,
-          paymentHistoryList:[]
+          paymentHistoryList:[],
+          balance:null
         }
 
     },
@@ -95,7 +96,7 @@ export default {
         
         request.get('/company/getPayMentById?id='+row.id).then((res)=>{
           for(let i=0;i<res.data.length;i++){
-                    res.data[i].insuranceDate=this.formatDate(Number(res.data[i].insuranceDate));
+                    // res.data[i].insuranceDate=this.formatDate(Number(res.data[i].insuranceDate));
                     res.data[i].paymentDate=this.formatDate(Number(res.data[i].paymentDate));
            }
           this.paymentHistoryList=res.data
@@ -108,6 +109,8 @@ export default {
         this.addPayMentInfo.salary=row.salary;
       },
       payMent(){
+        this.addPayMentInfo.insuranceDate.setMonth(Number(this.addPayMentInfo.insuranceDate.getMonth())+1);
+        this.addPayMentInfo.insuranceDate-=1;
         request.post('/company/payMent',this.addPayMentInfo).then((res)=>{
           console.log(res);
           if(res.code==200){
@@ -126,7 +129,13 @@ export default {
             this.getAlllaborInfo();
           }
         })
-      } 
+      },
+      getCompanyInfo(){
+        request.get('/company/getCompanyByAddr?address='+localStorage.getItem('userAddress')).then((res)=>{
+                this.balance=res.data.balances/100;
+                this.$emit('getBalance',this.balance);
+            })  
+      }
     }
 }
 </script>

@@ -3,6 +3,11 @@
     <div class="login-container">
       <h2 style="text-align: center;">Forya养老保险系统</h2>
       <el-form :model="this.loginForm" class="login-form"  label-width="auto">
+        <el-form-item label="用户类型" prop="userType" >
+            <el-select v-model="loginForm.userType" placeholder="选择用户">
+                <el-option v-for="item in this.users" :value="item.value" :label="item.label" :key="item.value" />
+            </el-select>
+        </el-form-item>
         <el-form-item label="用户名" prop="username" class="login-form-item" v-if="loginForm.userType!='4'">
           <el-input v-model="loginForm.username" placeholder="请输入用户名"></el-input>
         </el-form-item>
@@ -12,11 +17,11 @@
         <el-form-item label="区块链地址" v-show="loginForm.userType=='4' || loginForm.userType=='5'">
           <el-input v-model="this.loginForm.address" />
         </el-form-item>
-        <el-form-item label="用户类型" prop="userType" >
+        <!-- <el-form-item label="用户类型" prop="userType" >
             <el-select v-model="loginForm.userType" placeholder="选择用户">
                 <el-option v-for="item in this.users" :value="item.value" :label="item.label" :key="item.value" />
             </el-select>
-        </el-form-item>
+        </el-form-item> -->
         
         <el-form-item class="login-register-item">
             <el-button type="primary" class="login-register-btn" @click="login">登录</el-button>

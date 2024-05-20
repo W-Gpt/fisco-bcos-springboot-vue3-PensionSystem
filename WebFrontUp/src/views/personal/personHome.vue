@@ -1,7 +1,7 @@
 <template >
     <div class="common-layout" >
       <el-container >
-        <el-header><HeaderV /></el-header>
+        <el-header><HeaderV :balance="this.balance" /></el-header>
         <el-container >
           <el-aside width="200px" >
             <el-menu router class="el-menu-demo" default-active="companyInfo" style="height:calc(100vh - 60px);">
@@ -26,14 +26,19 @@
     components: { HeaderV },
     data(){
       return{
-       
+        balance:0,
         tabList:router.options.routes[6].children
       }
     },
     mounted(){
-     
+      this.getMyInsurance();
     },
     methods:{
+      getMyInsurance(){
+            request.get('/pension/getPensionInfo').then((res)=>{
+                this.balance=res.data.totalPayments;
+            })  
+        },
     }
   }
   </script>

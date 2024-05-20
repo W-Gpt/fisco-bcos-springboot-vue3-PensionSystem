@@ -77,7 +77,8 @@
           this.$message({
             type:"success",
             message:res.msg
-            })
+            });
+            this.registerForm={};
         }else{
           this.$message({
             type:"warning",
@@ -94,7 +95,7 @@
         //     return false;
         //   }
         // });
-        this.registerForm={};
+        
       },
       loginTo(){
         this.$router.push('/');
