@@ -131,7 +131,7 @@ public class CompanyService {
                 info = info.replace("\"","");
                 List<String> infoList = Arrays.asList(info.split(","));
 //                System.out.println("[INFO]:"+info);
-                allLabor.add(new Labor(infoList.get(0),infoList.get(1),infoList.get(2),infoList.get(3),infoList.get(4),infoList.get(5),infoList.get(6)));
+                allLabor.add(new Labor(infoList.get(0),infoList.get(1),infoList.get(2),infoList.get(3),infoList.get(4),infoList.get(5),infoList.get(6),infoList.get(7)));
             }
         }
 
@@ -246,6 +246,7 @@ public class CompanyService {
             jsonObject.put("salary",infoList.get(4));
             jsonObject.put("isInsurance",infoList.get(5));
             jsonObject.put("isSponsored",infoList.get(6));
+            jsonObject.put("SeparationDate",infoList.get(7));
             allLabor.add(jsonObject);
         }
         //[DEBUG]

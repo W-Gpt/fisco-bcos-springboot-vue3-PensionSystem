@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -149,6 +150,12 @@ public class SocialSecService {
             jsonObject.put("personalPayments",Integer.parseInt(infoList.get(7)) / 100);
             jsonObject.put("companyPayments",Integer.parseInt(infoList.get(8)) / 100);
             jsonObject.put("totalPayments",Integer.parseInt(infoList.get(9)) / 100);
+            //String时间戳转换为时间只要年月
+            String insuranceDate = infoList.get(10).substring(0, 10);
+            insuranceDate = insuranceDate.replace("-", "");
+            insuranceDate = insuranceDate.substring(0, 6);
+            insuranceDate = insuranceDate.substring(0, 4) + "年" + insuranceDate.substring(4, 6) + "月";
+//            jsonObject.put("insuranceDate",insuranceDate);
             jsonObject.put("insuranceDate",infoList.get(10));
             jsonObject.put("paymentDate",infoList.get(11));
             allInsurance.add(jsonObject);
