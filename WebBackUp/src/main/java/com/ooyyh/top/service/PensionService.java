@@ -33,7 +33,7 @@ public class PensionService {
         String pensionInfo = HttpUtils.commonReq("getPensionInfo",funcParam);
         pensionInfo = pensionInfo.substring(2,pensionInfo.length()-2);
         pensionInfo = pensionInfo.replace("\"","");
-        ColorFul.print(pensionInfo,ColorFul.GREEN);
+//        ColorFul.print(pensionInfo,ColorFul.GREEN);
         List<String> infoList = Arrays.asList(pensionInfo.split(","));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id",infoList.get(0));
@@ -43,7 +43,7 @@ public class PensionService {
         jsonObject.put("totalPayments",Integer.parseInt(infoList.get(4)) / 100);
         jsonObject.put("paymentDate",infoList.get(5));
         jsonObject.put("company",infoList.get(6));
-        ColorFul.print(jsonObject.toJSONString(),ColorFul.BLUE);
+//        ColorFul.print(jsonObject.toJSONString(),ColorFul.BLUE);
         return Result.success(jsonObject);
     }
     public Map getAllPayMent(String token) throws UnsupportedEncodingException {
@@ -79,7 +79,7 @@ public class PensionService {
             jsonObject.put("paymentDate",infoList.get(11));
             allList.add(jsonObject);
         }
-        ColorFul.print(allList.toJSONString(),ColorFul.BLUE);
+//        ColorFul.print(allList.toJSONString(),ColorFul.BLUE);
         return Result.success(allList);
     }
 
@@ -114,7 +114,7 @@ public class PensionService {
 
 
         }
-        ColorFul.print(allList.toJSONString(),ColorFul.BLUE);
+//        ColorFul.print(allList.toJSONString(),ColorFul.BLUE);
         return Result.success(allList);
 
     }

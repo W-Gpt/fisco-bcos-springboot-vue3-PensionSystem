@@ -79,7 +79,7 @@ public class SecurityService {
         List<Person> userList = new ArrayList<Person>();
         List funcParam = new ArrayList();
         String data = HttpUtils.commonReq(userAddress,"getAllPersonId",funcParam);
-        System.out.println(data); // data => [1,2]
+//        System.out.println(data); // data => [1,2]
         List<String> idList = Arrays.asList((data.substring(3, data.length() - 3)).split(","));
 //        System.out.println(idList.get());
         for (int i = 0; i < idList.size(); i++) {

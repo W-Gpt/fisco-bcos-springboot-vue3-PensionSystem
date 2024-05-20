@@ -65,7 +65,7 @@ public class CompanyService {
         List<String> addressList = Arrays.asList(resolve.replace("\\\"", "").split(","));
         JSONArray allList = new JSONArray();
         for (int i = 0; i < addressList.size(); i++) {
-            System.out.println("[INFO]:地址数组:" + addressList);
+//            System.out.println("[INFO]:地址数组:" + addressList);
             List funcParams1 = new ArrayList();
             funcParams1.add(addressList.get(i).trim());
             String response1  = HttpUtils.commonReq("getCompanyByAddr",funcParams1);
@@ -81,7 +81,7 @@ public class CompanyService {
 
 
         }
-        ColorFul.print(String.valueOf(allList),ColorFul.BLACK);
+//        ColorFul.print(String.valueOf(allList),ColorFul.BLACK);
         return Result.success(allList);
 
     }
@@ -98,20 +98,20 @@ public class CompanyService {
         List<String> addressList = Arrays.asList(resolve.replace("\\\"", "").split(","));
         List<Labor> allLabor = new ArrayList<>();
         for (int i = 0; i < addressList.size(); i++) {
-            System.out.println("[INFO]:地址数组:" + addressList);
+//            System.out.println("[INFO]:地址数组:" + addressList);
             List funcParam = new ArrayList();
             funcParam.add(addressList.get(i).trim());
 //            System.out.println(HttpUtils.commonReq("getCompanyAllper", funcParam));
             String all = HttpUtils.commonReq("getCompanyAllper", funcParam);
-            System.out.println("[INFO]:AllPer:"+all);
+//            System.out.println("[INFO]:AllPer:"+all);
             if (Objects.equals(all, "[\"[ ]\"]")){
-                System.out.println("\u001B[34m[INFO]: 本轮进入 Continue\u001B[0m");
+//                System.out.println("\u001B[34m[INFO]: 本轮进入 Continue\u001B[0m");
                 continue;
             }
             List<String> allPer = Arrays.asList(all.substring(3, all.length() - 3).split(","));
 //            System.out.println("AllPer:"+allPer);
-            ColorFul.print("[INFO]:本轮AllPer"+allPer, ColorFul.BLUE);
-            System.out.println("[INFO]:本轮get(0)"+allPer.get(0));
+//            ColorFul.print("[INFO]:本轮AllPer"+allPer, ColorFul.BLUE);
+//            System.out.println("[INFO]:本轮get(0)"+allPer.get(0));
 //            if (allPer.get(0) == null){
 //                System.out.println("[INFO]:"+allPer.get(0)+"本轮进入continue");
 //                continue;
@@ -216,7 +216,7 @@ public class CompanyService {
             jsonObject.put("paymentDate",infoList.get(11));
             allInsurance.add(jsonObject);
         }
-        ColorFul.print("该公司所有缴费记录已打出=>"+allInsurance.toString(), ColorFul.BLUE);
+//        ColorFul.print("该公司所有缴费记录已打出=>"+allInsurance.toString(), ColorFul.BLUE);
         return Result.success(allInsurance);
 
     }
@@ -249,7 +249,7 @@ public class CompanyService {
             allLabor.add(jsonObject);
         }
         //[DEBUG]
-        ColorFul.print(String.valueOf(allLabor),ColorFul.BLUE);
+//        ColorFul.print(String.valueOf(allLabor),ColorFul.BLUE);
         return Result.success(allLabor);
     }
     public Map getCompanyStaffPayment(String token,String id) throws UnsupportedEncodingException {
@@ -288,9 +288,24 @@ public class CompanyService {
             allLabor.add(jsonObject);
 
         }
-        ColorFul.print(String.valueOf(allLabor),ColorFul.BLUE);
+//        ColorFul.print(String.valueOf(allLabor),ColorFul.BLUE);
         return Result.success(allLabor);
 
+    }
+    public Map getCompanyByAddr(String address) {
+        List funcParam = new ArrayList();
+        funcParam.add(address);
+        String response  = HttpUtils.commonReq("getCompanyByAddr",funcParam);
+        response = response.substring(2, response.length() - 2);
+        response = response.replace("\"","");
+        List<String> infoList = Arrays.asList(response.split(","));
+        JSONObject info = new JSONObject();
+        info.put("companyAddress",infoList.get(0));
+        info.put("city",infoList.get(1));
+        info.put("companyName",infoList.get(2));
+        info.put("balances",infoList.get(3));
+        info.put("staffSize",infoList.get(4));
+        return Result.success(info);
     }
 }
 

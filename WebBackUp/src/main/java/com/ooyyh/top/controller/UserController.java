@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ooyyh.top.dao.UserMapper;
 import com.ooyyh.top.entity.User;
 import com.ooyyh.top.service.UserService;
+import com.ooyyh.top.util.ColorFul;
 import com.ooyyh.top.util.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,12 +28,16 @@ public class UserController {
     @PostMapping(value = "/register")
     @ResponseBody
     public Map register(@RequestBody User user) {
-        return userService.register(user);
+        Map result = userService.register(user);
+        ColorFul.print(result.toString(),ColorFul.RED);
+        return  result;
     }
     @PostMapping(value = "/login")
     @ResponseBody
     public Map login(@RequestBody User user) {
-       return userService.login(user);
+       Map result =  userService.login(user);
+        ColorFul.print(result.toString(),ColorFul.RED);
+       return result;
     }
 
 }
