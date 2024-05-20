@@ -11,7 +11,8 @@ public class Labor {
     String salary;
     String isInsurance;
     String isSponsored;
-    public Labor(String id, String companyAddress, String city, String workDate, String salary, String isInsurance, String isSponsored) {
+    String separationDate;
+    public Labor(String id, String companyAddress, String city, String workDate, String salary, String isInsurance, String isSponsored,String separationDate) {
         this.id = id;
         this.companyAddress = companyAddress;
         this.city = city;
@@ -19,5 +20,6 @@ public class Labor {
         this.salary = salary;
         this.isInsurance = isInsurance;
         this.isSponsored = isSponsored;
+        this.separationDate = isInsurance;
     }
 }

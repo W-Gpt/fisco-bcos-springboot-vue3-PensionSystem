@@ -110,6 +110,7 @@ public class PensionService {
             jsonObject.put("isInsurance",infoList.get(5));
             jsonObject.put("isSponsored",infoList.get(6));
             jsonObject.put("username",user.getUsername());
+            jsonObject.put("SeparationDate",infoList.get(7));
             allList.add(jsonObject);
 
 
