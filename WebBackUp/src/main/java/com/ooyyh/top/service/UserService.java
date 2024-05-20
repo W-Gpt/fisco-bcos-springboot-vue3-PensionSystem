@@ -35,7 +35,7 @@ public class UserService {
             funcParam.add(user.getId());
             String data = HttpUtils.commonReq("addPenSionAccount", funcParam);
             JSONObject responseData = (JSONObject) JSONObject.parse(data);
-            System.out.println(responseData.get("transactionIndex"));
+//            System.out.println(responseData.get("transactionIndex"));
             Map result = new HashMap();
             if (!(Boolean)responseData.get("statusOK")){
                 result.put("code","500");

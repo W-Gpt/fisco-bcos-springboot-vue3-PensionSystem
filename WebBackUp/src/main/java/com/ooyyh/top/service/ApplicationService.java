@@ -225,7 +225,7 @@ public class ApplicationService {
             application.put("index",responseList.get(i).trim());
             allList.add(application);
         }
-        ColorFul.print("所有跳槽信息" + allList.toString() ,ColorFul.GREEN);
+//        ColorFul.print("所有跳槽信息" + allList.toString() ,ColorFul.GREEN);
         return Result.success(allList);
 
     }
