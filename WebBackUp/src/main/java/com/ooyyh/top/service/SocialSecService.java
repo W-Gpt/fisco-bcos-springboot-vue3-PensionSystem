@@ -189,14 +189,18 @@ public class SocialSecService {
             List<String> AllIndex = Arrays.asList(response1.split(","));
             for (int j = 0; j < AllIndex.size(); j++) {
             List funcParam2 = new ArrayList();
-            funcParam2.add(AllIndex.get(i).trim());
+            funcParam2.add(AllIndex.get(j).trim());
             String response2 = HttpUtils.commonReq("getPayMentByIndex",funcParam2);
             response2 = response2.substring(2, response2.length() - 2);
             response2 = response2.replace("\"","");
             List<String> infoList = Arrays.asList(response2.split(","));
             JSONObject jsonObject = new JSONObject();
+            QueryWrapper<Company> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("company_address",infoList.get(1));
+            Company company = companyMapper.selectOne(queryWrapper1);
             jsonObject.put("id",infoList.get(0));
             jsonObject.put("companyAddress",infoList.get(1));
+            jsonObject.put("companyName",company.getCompanyName());
             jsonObject.put("socialSecurityAddr",infoList.get(2));
             jsonObject.put("city",infoList.get(3));
             jsonObject.put("paymentBase",infoList.get(4));

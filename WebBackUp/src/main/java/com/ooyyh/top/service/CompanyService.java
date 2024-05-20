@@ -156,6 +156,13 @@ public class CompanyService {
         funcParam.add(insurance.getPaymentDate());
         JSONObject response = (JSONObject) JSONObject.parse(HttpUtils.commonReq(company.getCompanyAddress(),"PayMent",funcParam));
         //构建一个当前时间
+        ColorFul.print(String.valueOf(response),ColorFul.RED);
+        if (!(Boolean)response.get("statusOK")) {
+            return Result.error((String) response.get("message"));
+
+        } else  {
+            return Result.success();
+        }
 
 //        //get社保局信息
 //        QueryWrapper<User> queryWrapper1 = new QueryWrapper<>();
@@ -170,7 +177,7 @@ public class CompanyService {
 //        insurance.setPersonalPayments(String.valueOf(Integer.parseInt(insurance.getSalary()) * Integer.parseInt(socialSec.getPersonalRate()) / 100));
 //        insurance.setCompanyPayments(String.valueOf(Integer.parseInt(insurance.getSalary()) * Integer.parseInt(socialSec.getCompanyRate()) / 100));
 //        insuranceMapper.insert(insurance);
-        return Result.success();
+//        return Result.success();
     }
 
 
@@ -202,7 +209,11 @@ public class CompanyService {
             response1 = response1.replace("\"","");
             List<String> infoList = Arrays.asList(response1.split(","));
             JSONObject jsonObject = new JSONObject();
+            QueryWrapper<User> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("id",infoList.get(0));
+            User user = userMapper.selectOne(queryWrapper1);
             jsonObject.put("id",infoList.get(0));
+            jsonObject.put("name",user.getUsername());
             jsonObject.put("companyAddress",infoList.get(1));
             jsonObject.put("socialSecurityAddr",infoList.get(2));
             jsonObject.put("city",infoList.get(3));
@@ -239,7 +250,21 @@ public class CompanyService {
             response1 = response1.replace("\"","");
             List<String> infoList = Arrays.asList(response1.split(","));
             JSONObject jsonObject = new JSONObject();
+            QueryWrapper<User> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("id",infoList.get(0));
+            User user = userMapper.selectOne(queryWrapper1);
+            List funcParam2 = new ArrayList();
+            funcParam2.add(infoList.get(2).trim());
+            String socialSec = HttpUtils.commonReq("getSocialAddr",funcParam2);
+            socialSec = socialSec.substring(2, socialSec.length() - 2);
+            socialSec = socialSec.replace("\"","");
+            List<String> socialSecList = Arrays.asList(socialSec.split(","));
+            jsonObject.put("maxBase",socialSecList.get(0));
+            jsonObject.put("minBase",socialSecList.get(1));
+            jsonObject.put("personalRate",socialSecList.get(2));
+            jsonObject.put("companyRate",socialSecList.get(3));
             jsonObject.put("id",infoList.get(0));
+            jsonObject.put("name",user.getUsername());
             jsonObject.put("companyAddress",infoList.get(1));
             jsonObject.put("city",infoList.get(2));
             jsonObject.put("workDate",infoList.get(3));

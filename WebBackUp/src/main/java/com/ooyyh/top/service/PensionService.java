@@ -3,7 +3,9 @@ package com.ooyyh.top.service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ooyyh.top.dao.CompanyMapper;
 import com.ooyyh.top.dao.UserMapper;
+import com.ooyyh.top.entity.Company;
 import com.ooyyh.top.entity.User;
 import com.ooyyh.top.util.ColorFul;
 import com.ooyyh.top.util.HttpUtils;
@@ -23,6 +25,8 @@ import java.util.Map;
 public class PensionService {
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    CompanyMapper companyMapper;
     public Map getPensionInfo(String token) throws UnsupportedEncodingException {
         String tokenT = URLDecoder.decode(token, "UTF-8");
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -56,6 +60,7 @@ public class PensionService {
         String pensionInfo = HttpUtils.commonReq("getPayMentById",funcParam);
         pensionInfo = pensionInfo.substring(3,pensionInfo.length()-3);
         List<String> AllIndex = Arrays.asList(pensionInfo.split(","));
+
         JSONArray allList = new JSONArray();
         for (int i = 0; i < AllIndex.size(); i++) {
             List funcParam1 = new ArrayList();
@@ -65,8 +70,12 @@ public class PensionService {
             paymentInfo = paymentInfo.replace("\"","");
             List<String> infoList = Arrays.asList(paymentInfo.split(","));
             JSONObject jsonObject = new JSONObject();
+            QueryWrapper<Company> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("company_address",infoList.get(1));
+            Company company = companyMapper.selectOne(queryWrapper1);
             jsonObject.put("id",infoList.get(0));
             jsonObject.put("companyAddress",infoList.get(1));
+            jsonObject.put("companyName",company.getCompanyName());
             jsonObject.put("socialSecurityAddr",infoList.get(2));
             jsonObject.put("city",infoList.get(3));
             jsonObject.put("paymentBase",infoList.get(4));
@@ -102,7 +111,11 @@ public class PensionService {
             paymentInfo = paymentInfo.replace("\"","");
             List<String> infoList = Arrays.asList(paymentInfo.split(","));
             JSONObject jsonObject = new JSONObject();
+            QueryWrapper<Company> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("company_address",infoList.get(1));
+            Company company = companyMapper.selectOne(queryWrapper1);
             jsonObject.put("id",infoList.get(0));
+            jsonObject.put("companyName",company.getCompanyName());
             jsonObject.put("companyAddress",infoList.get(1));
             jsonObject.put("city",infoList.get(2));
             jsonObject.put("workDate",infoList.get(3));

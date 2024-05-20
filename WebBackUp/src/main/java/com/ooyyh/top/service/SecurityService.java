@@ -83,7 +83,7 @@ public class SecurityService {
         List<String> idList = Arrays.asList((data.substring(3, data.length() - 3)).split(","));
 //        System.out.println(idList.get());
         for (int i = 0; i < idList.size(); i++) {
-            System.out.println(i);
+//            System.out.println(i);
             QueryWrapper<Person> queryWrapper = new QueryWrapper<Person>();
             queryWrapper.eq("id",idList.get(i));
             Person onUser = securityMapper.selectOne(queryWrapper);
