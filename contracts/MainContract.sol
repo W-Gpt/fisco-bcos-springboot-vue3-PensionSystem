@@ -33,6 +33,7 @@ contract MainContract{
         uint salary; // 工资
         bool isInsurance;//是否参保 第一次为其缴费变为true
         bool isSponsored; // 是否离职
+        uint separationDate;//离职时间
     }
     //养老保险账号
     struct PensionAccount {
@@ -103,6 +104,7 @@ contract MainContract{
     }
     function addCompany(address _companyAddress,string _city,string _name,uint _balance) public {
         require(SocialSecDeptRoles[msg.sender],"只有社保局可以添加在社保局缴纳社保的公司");
+        require(citys[_city].laodRoslAddr!=address(0),"该城市未注册劳动局");
         require(keccak256(abi.encodePacked(SocialSecDepts[msg.sender].city))==keccak256(abi.encodePacked(_city)),"只能添加本地的公司");
         require(CompanyByAddr[_companyAddress].companyAddress==address(0),"该地址已被使用");
         AllCompany[citys[_city].socialSecurityAddr].push(_companyAddress);
@@ -112,9 +114,9 @@ contract MainContract{
     function getAllCompanyAddr() public view returns (address[] memory) {
         return AllCompany[msg.sender];
     }
-    function getCompanyByAddr(address _companyAddress) public view returns (address,string,string,uint) {
+    function getCompanyByAddr(address _companyAddress) public view returns (address,string,string,uint,uint) {
         Company memory company = CompanyByAddr[_companyAddress];
-        return (company.companyAddress,company.city,company.name,company.CompanyBalance);
+        return (company.companyAddress,company.city,company.name,company.CompanyBalance,staffs[_companyAddress].length);
     }
     function approvedTransfer(uint _index) public {
         require(keccak256(abi.encodePacked(ownerApplication[_index].fromSocialSecDept))==keccak256(abi.encodePacked(msg.sender)),"只有转出地社保局才能批准");
@@ -133,7 +135,7 @@ contract MainContract{
         staffs[ownerApplication[_index].toCompany].push(ownerApplication[_index].id);
         staffs[ownerApplication[_index].fromCompany] = removeStaffById(staffs[ownerApplication[_index].fromCompany],ownerApplication[_index].id);
 
-        // laborInfos[getLaIndexForC(ownerApplication[_index].toCompany,ownerApplication[_index].id)].isSponsored=false;
+        laborInfos[getLaIndexForC(ownerApplication[_index].toCompany,ownerApplication[_index].id)].separationDate=now;
         laborInfos[getLaIndexForC(ownerApplication[_index].fromCompany,ownerApplication[_index].id)].isSponsored=true;
         LaborInfo memory laborInfo=laborInfos[getLaIndexForC(ownerApplication[_index].fromCompany,ownerApplication[_index].id)];
         // laborInfo.laborInfoIndex=laborInfoIndex;
@@ -141,6 +143,8 @@ contract MainContract{
         laborInfo.city=CompanyByAddr[ownerApplication[_index].toCompany].city;
         laborInfo.workDate=now;
         laborInfo.isInsurance=false;
+        laborInfo.isSponsored=false;
+        laborInfo.separationDate=0;
         laborInfos[laborIndex]=laborInfo;
         laborIndexPer[ownerApplication[_index].id].push(laborIndex);
         companyAllper[ownerApplication[_index].toCompany].push(laborIndex);
@@ -164,7 +168,7 @@ contract MainContract{
     }
     //获得公司下指定人的工作信息
     function getLaIndexForC(address _companyAddress,uint _id) view public returns(uint){
-        for(uint i=0; i<companyAllper[_companyAddress].length; i++){
+        for(uint i=companyAllper[_companyAddress].length-1; i>=0; i--){
             laborInfos[companyAllper[_companyAddress][i]].id;
             if (laborInfos[companyAllper[_companyAddress][i]].id==_id){
                 return companyAllper[_companyAddress][i];
@@ -192,8 +196,21 @@ contract MainContract{
     mapping(address=> uint[]) public companyPaymentsIndex;
     mapping(uint => PaymentRecord) PayMentInfo;
     uint PayMentIndex = 0;
+    
+    function isPayMented(uint _id,uint _insuranceDate) public view returns(bool){
+        uint[] memory perPayMentIndex=PayMents[_id];
+        for(uint i=0;i<perPayMentIndex.length;i++){
+            if(PayMentInfo[perPayMentIndex[i]].insuranceDate==_insuranceDate){
+                return false;
+            }
+        }
+        return true;
+    }
+    
     function PayMent(uint _id,uint salay,uint insuranceDate,uint paymentDate) public {
-         PayMentIndex += 1;
+        require(laborInfos[getLaIndexForC(msg.sender,_id)].workDate<insuranceDate,"只能缴纳员工入职后的养老保险");
+        require(isPayMented(_id,insuranceDate),"该员工已缴纳该月养老保险");
+        PayMentIndex += 1;
         PayMents[_id].push(PayMentIndex);
         companyPaymentsIndex[msg.sender].push(PayMentIndex);
         PensionAccount memory account = PensionAccounts[_id];
@@ -329,7 +346,12 @@ contract MainContract{
         require(PersonById[_id].id!=0,"不存在该个人信息");
         require(PensionAccounts[_id].id!=0,"该个人未注册养老保险账户");
         require(keccak256(abi.encodePacked(laodRosls[msg.sender].city))==keccak256(abi.encodePacked(CompanyByAddr[_companyAddress].city)),"劳动局与公司不在一个城市");
-        laborInfos[laborIndex]=LaborInfo(_id,_companyAddress,CompanyByAddr[_companyAddress].city,_workDate,_salary,false,false);
+        uint lengths=laborIndexPer[_id].length;
+        if(lengths!=0){
+            require(laborInfos[laborIndexPer[_id][lengths - 1 ]].isSponsored,"该人员已有工作公司");
+        }
+        // require(laborInfos[laborIndexPer[_id][lengths - 1 ]].isSponsored,"该人员已有工作公司");
+        laborInfos[laborIndex]=LaborInfo(_id,_companyAddress,CompanyByAddr[_companyAddress].city,_workDate,_salary,false,false,0);
         companyAllper[_companyAddress].push(laborIndex);
         laborIndexPer[_id].push(laborIndex);
         staffs[_companyAddress].push(_id);
@@ -353,11 +375,19 @@ contract MainContract{
         return laborIndexPer[_id];
     }
 
-    function getLaborInfo(uint _laborIndex) view public returns(uint,address,string memory,uint,uint,bool,bool){
+    function getLaborInfo(uint _laborIndex) view public returns(uint,address,string memory,uint,uint,bool,bool,uint){
         LaborInfo memory laborInfo=laborInfos[_laborIndex];
-        return (laborInfo.id,laborInfo.companyAddress,laborInfo.city,laborInfo.workDate,laborInfo.salary,laborInfo.isInsurance,laborInfo.isSponsored);
+        return (laborInfo.id,laborInfo.companyAddress,laborInfo.city,laborInfo.workDate,laborInfo.salary,laborInfo.isInsurance,laborInfo.isSponsored,laborInfo.separationDate);
     }
 
+    function getSocialAddr(string _city)public view returns(uint,uint,uint,uint){
+        return(getSocialInfo(citys[_city].socialSecurityAddr));
+    }
+    
+    function getSocialInfo(address _address)public view returns(uint,uint,uint,uint){
+        SocialSecDept memory socialSecDept=SocialSecDepts[_address];
+        return (socialSecDept.maxBase,socialSecDept.minBase,socialSecDept.personalRate,socialSecDept.companyRate);
+    }
     function removeStaffById(uint[] memory _staffs, uint _id) public pure returns (uint[] memory) { 
         uint length = _staffs.length;
         uint[] memory result = new uint[](length);

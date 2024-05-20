@@ -3,7 +3,7 @@
         <el-button type="success" @click="addInfo">填写申请</el-button>
     </el-row>
     <el-row>
-        <el-table :data="this.applicationList" style="width: 100%" border>
+        <el-table :data="this.displayedData" style="width: 100%" border>
                   <el-table-column  label="身份证号" prop="id" />
                   <el-table-column  label="原公司" prop="fromCompany" />
                   <el-table-column  label="申请转入公司" prop="toCompany" />
@@ -25,6 +25,15 @@
                     </template>
                   </el-table-column>
                 </el-table>
+    </el-row>
+    <el-row>
+        <el-pagination
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage"
+      :page-size="pageSize"
+      :total="total"
+    >
+    </el-pagination>    
     </el-row>
     <el-dialog v-model="this.dialogVisible" style="height:300px">
         <el-form v-model="this.addApplication" label-width="auto">
@@ -52,7 +61,11 @@ export default {
         return{
             applicationList:[],
             addApplication:{},
-            dialogVisible:false
+            dialogVisible:false,
+            displayedData : [],
+            total : 0,
+            currentPage :1,
+            pageSize : 10
         }
     },
     mounted(){
@@ -116,8 +129,19 @@ export default {
         getApplication(){
             request.get('/application/getMyTransfer?id='+localStorage.getItem('userId')).then((res)=>{
                 this.applicationList=res.data
+                this.total=this.applicationList.length;
+                this.loadData(this.currentPage)
             })
         },
+        loadData(newPage){
+        this.displayedData=this.applicationList.slice(0+((newPage-1)*this.pageSize), this.pageSize+((newPage-1)*this.pageSize));
+        this.displayedData.reverse();
+      },
+        handleCurrentChange(newPage){
+            this.currentPage = newPage;
+            this.loadData(newPage);
+            console.log(this.displayedData);
+      }
 
     }
 }

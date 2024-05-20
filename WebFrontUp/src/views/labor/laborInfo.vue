@@ -1,6 +1,6 @@
 <template>
     <el-row>
-        <el-table :data="this.laborInfoList" style="width: 100%" border>
+        <el-table :data="this.displayedData" style="width: 100%" border>
                   <el-table-column  label="身份证号" prop="id" />
                   <!-- <el-table-column  label="姓名" prop="name" />
                   <el-table-column  label="年龄" prop="age" /> -->
@@ -22,6 +22,15 @@
                   </el-table-column>
                 </el-table>
     </el-row>
+    <el-row>
+        <el-pagination
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage"
+      :page-size="pageSize"
+      :total="total"
+    >
+    </el-pagination>    
+    </el-row>
 </template>
 <script>
 import request from '@/utils/request';
@@ -29,6 +38,10 @@ export default {
     data(){
       return{
         laborInfoList:[],
+        displayedData : [],
+            total : 0,
+            currentPage :1,
+            pageSize : 10
       }
     },
     mounted(){
@@ -55,11 +68,22 @@ export default {
                     for(let i=0;i<res.data.length;i++){
                     res.data[i].workDate=this.formatDate(Number(res.data[i].workDate));
                 }
-                this.laborInfoList=res.data
+                this.laborInfoList=res.data;
+                this.total=this.laborInfoList.length;
+                this.loadData(this.currentPage)
             }
             })
             
-        }
+        },
+      loadData(newPage){
+        this.laborInfoList.sort((a, b) => Date.parse(a.workDate) - Date.parse(b.workDate)).reverse();
+        this.displayedData=this.laborInfoList.slice(0+((newPage-1)*this.pageSize), this.pageSize+((newPage-1)*this.pageSize));
+      },
+        handleCurrentChange(newPage){
+            this.currentPage = newPage;
+            this.loadData(newPage);
+            console.log(this.displayedData);
+      }
     }
     
 }

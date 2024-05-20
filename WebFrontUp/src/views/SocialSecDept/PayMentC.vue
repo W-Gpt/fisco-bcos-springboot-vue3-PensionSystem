@@ -12,7 +12,7 @@
         </el-table>
     </el-row>
     <el-dialog v-model="dialogVisible"> 
-        <el-table :data="this.paymentHistoryList" style="width: 100%" border>
+        <el-table :data="this.displayedData" style="width: 100%" border>
                   <el-table-column  label="身份证号" prop="id" />
                   <el-table-column  label="缴费基数" prop="paymentBase" />
                   <el-table-column  label="个人缴费比例(%)" prop="personalRate" />
@@ -23,6 +23,15 @@
                   <el-table-column  label="参保年月" prop="insuranceDate" />
                   <el-table-column  label="缴费时间" prop="paymentDate" />
                 </el-table>
+                <el-row>
+        <el-pagination
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage"
+      :page-size="pageSize"
+      :total="total"
+    >
+    </el-pagination>    
+    </el-row>
     </el-dialog>
 </template>
 <script>
@@ -32,7 +41,11 @@ export default {
         return{
             companyList:[],
             paymentHistoryList:[],
-            dialogVisible:false
+            dialogVisible:false,
+            displayedData : [],
+            total : 0,
+            currentPage :1,
+            pageSize : 10
         }
     },
     mounted(){
@@ -77,8 +90,11 @@ export default {
                 for(let i=0;i<res.data.length;i++){
                     // res.data[i].insuranceDate=this.formatDate(Number(res.data[i].insuranceDate));
                     res.data[i].paymentDate=this.formatDate(Number(res.data[i].paymentDate));
+                    res.data[i].insuranceDate=this.formatDate(Number(res.data[i].insuranceDate)).split('-').slice(0, 2).join('-');
                 }
-                this.paymentHistoryList=res.data
+                this.paymentHistoryList=res.data;
+                this.total=this.paymentHistoryList.length;
+                this.loadData(this.currentPage)
             }else{
                 this.$message({
                         type:"warning",
@@ -88,6 +104,16 @@ export default {
           
         })
       },
+      loadData(newPage){
+        this.paymentHistoryList.sort((a, b) => Date.parse(a.insuranceDate) - Date.parse(b.insuranceDate)).reverse();
+        this.displayedData=this.paymentHistoryList.slice(0+((newPage-1)*this.pageSize), this.pageSize+((newPage-1)*this.pageSize));
+        
+      },
+        handleCurrentChange(newPage){
+            this.currentPage = newPage;
+            this.loadData(newPage);
+            console.log(this.displayedData);
+      }
     }
 }
 </script>

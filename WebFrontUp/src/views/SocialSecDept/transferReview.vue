@@ -1,6 +1,6 @@
 <template>
   <el-row>
-      <el-table :data="this.applicationList" style="width: 100%" border>
+      <el-table :data="this.displayedData" style="width: 100%" border>
                 <el-table-column  label="转移申请号" prop="index" />
                 <el-table-column  label="身份证号" prop="id" />
                 <el-table-column  label="原公司" prop="fromCompany" />
@@ -24,6 +24,15 @@
                 </el-table-column>
               </el-table>
   </el-row>
+  <el-row>
+        <el-pagination background
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage"
+      :page-size="pageSize"
+      :total="total"
+    >
+    </el-pagination>    
+    </el-row>
 </template>
 <script>
 import request from '@/utils/request';
@@ -32,6 +41,10 @@ export default {
       return{
           applicationList:[],
           addApplication:{status:null},
+          displayedData : [],
+            total : 0,
+            currentPage :1,
+            pageSize : 10
       }
   },
   mounted(){
@@ -48,7 +61,9 @@ export default {
       },
       getApplication(){
             request.get('/application/getSocialTransfer').then((res)=>{
-                this.applicationList=res.data
+                this.applicationList=res.data;
+                this.total=this.applicationList.length;
+                this.loadData(this.currentPage)
             })
         },
         approved(row){
@@ -87,6 +102,16 @@ export default {
                 }
             })
         },
+      loadData(newPage){
+        // this.applicationList.sort((a, b) => Date.parse(a.insuranceDate) - Date.parse(b.insuranceDate)).reverse();
+        this.displayedData=this.applicationList.slice(0+((newPage-1)*this.pageSize), this.pageSize+((newPage-1)*this.pageSize));
+        
+      },
+        handleCurrentChange(newPage){
+            this.currentPage = newPage;
+            this.loadData(newPage);
+            console.log(this.displayedData);
+      }
   }
 }
 </script>

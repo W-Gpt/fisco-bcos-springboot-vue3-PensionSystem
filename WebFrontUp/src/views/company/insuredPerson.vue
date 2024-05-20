@@ -1,7 +1,8 @@
 <template>
     <el-row>
-        <el-table :data="this.paymentHistoryList" style="width: 100%" border>
+        <el-table :data="this.displayedData" style="width: 100%" border>
                   <el-table-column  label="身份证号" prop="id" />
+                  <el-table-column  label="姓名" prop="name" />
                   <el-table-column  label="缴费基数" prop="paymentBase" />
                   <el-table-column  label="个人缴费比例(%)" prop="personalRate" />
                   <el-table-column  label="公司缴费比例(%)" prop="companyRate" />
@@ -11,19 +12,37 @@
                   <el-table-column  label="参保年月" prop="insuranceDate" />
                   <el-table-column  label="缴费时间" prop="paymentDate" />
                 </el-table>
-    </el-row>    
+    </el-row>
+    <el-row>
+        <el-pagination
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage"
+      :page-size="pageSize"
+      :total="total"
+    >
+    </el-pagination>    
+    </el-row>
+    <!-- <Pagination :dataList="this.paymentHistoryList" @getDisplayedData="loadNewData"></Pagination> -->
 </template>
 <script>
 import request from './../../utils/request.js'
+import Pagination from '@/components/Pagination.vue';
 export default { 
-
+    components: { Pagination },
     data(){
         return{
-            paymentHistoryList:[]
+            paymentHistoryList:[],
+            displayedData : [],
+            balance:null,
+            total : 0,
+            currentPage :1,
+            pageSize : 2
         }
     },
     mounted(){
-        this.getHistory();
+        this.getHistory(); 
+        this.getCompanyInfo();
+        this.loadData(this.currentPage)
     },
     methods:{
         add0(value) {
@@ -43,12 +62,28 @@ export default {
         request.get('/company/getAllInsurance').then((res)=>{
             console.log(res)
           for(let i=0;i<res.data.length;i++){
-                    // res.data[i].insuranceDate=this.formatDate(Number(res.data[i].insuranceDate));
+                    res.data[i].insuranceDate=this.formatDate(Number(res.data[i].insuranceDate)).split('-').slice(0, 2).join('-');
                     res.data[i].paymentDate=this.formatDate(Number(res.data[i].paymentDate));
            }
-          this.paymentHistoryList=res.data
+          this.paymentHistoryList=res.data;
+          this.total=this.paymentHistoryList.length;
+          this.loadData(this.currentPage)
         })
       },
+      loadData(newPage){
+        this.displayedData=this.paymentHistoryList.slice(0+((newPage-1)*this.pageSize), this.pageSize+((newPage-1)*this.pageSize))
+      },
+        handleCurrentChange(newPage){
+            this.currentPage = newPage;
+            this.loadData(newPage);
+            console.log(this.displayedData);
+      },
+      getCompanyInfo(){
+        request.get('/company/getCompanyByAddr?address='+localStorage.getItem('userAddress')).then((res)=>{
+                this.balance=res.data.balances/100;
+                this.$emit('getBalance',this.balance);
+            })  
+      }
     }
     
 }

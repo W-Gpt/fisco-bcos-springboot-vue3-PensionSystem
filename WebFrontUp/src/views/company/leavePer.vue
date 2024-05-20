@@ -2,16 +2,26 @@
     <el-row>
         <el-table :data="this.laborInfoList" style="width: 100%" border>
                   <el-table-column  label="身份证号" prop="id" />
-                  <!-- <el-table-column  label="姓名" prop="name" />
-                  <el-table-column  label="年龄" prop="age" /> -->
+                  <el-table-column  label="姓名" prop="name" />
+                  <el-table-column  label="年龄" prop="age" />
                   <el-table-column  label="参加工作时间" prop="workDate" />
                   <el-table-column  label="工资" prop="salary" />
+                  <el-table-column  label="离职时间" prop="SeparationDate" />
                   <el-table-column label="操作">
                     <template #default="scope">
                         <el-button type="primary" v-if="scope.row.isInsurance=='true'" @click="getHistory(scope.row)">查看该缴费记录</el-button>
                     </template>
                   </el-table-column>
         </el-table>
+    </el-row>
+    <el-row>
+        <el-pagination
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage"
+      :page-size="pageSize"
+      :total="total"
+    >
+    </el-pagination>    
     </el-row>
     <el-dialog v-model="this.dialogHistory" title="缴费历史">
       <el-table :data="this.paymentHistoryList" style="width: 100%" border>
@@ -34,7 +44,11 @@ export default {
         return{
           laborInfoList:[],
           dialogHistory:false,
-          paymentHistoryList:[]
+          paymentHistoryList:[],
+          displayedData : [],
+            total : 0,
+            currentPage :1,
+            pageSize : 10
         }
 
     },
@@ -73,12 +87,23 @@ export default {
         request.get('/company/getPayMentById?id='+row.id).then((res)=>{
           for(let i=0;i<res.data.length;i++){
                     // res.data[i].insuranceDate=this.formatDate(Number(res.data[i].insuranceDate));
+                    res.data[i].SeparationDate=this.formatDate(Number(res.data[i].SeparationDate));
                     res.data[i].paymentDate=this.formatDate(Number(res.data[i].paymentDate));
            }
-          this.paymentHistoryList=res.data
+          this.paymentHistoryList=res.data;
+          this.total=this.paymentHistoryList.length;
+                this.loadData(this.currentPage)
         })
         this.dialogHistory=true;
       },
+      loadData(newPage){
+        this.displayedData=this.paymentHistoryList.slice(0+((newPage-1)*this.pageSize), this.pageSize+((newPage-1)*this.pageSize))
+      },
+        handleCurrentChange(newPage){
+            this.currentPage = newPage;
+            this.loadData(newPage);
+            console.log(this.displayedData);
+      }
     }
 }
 </script>

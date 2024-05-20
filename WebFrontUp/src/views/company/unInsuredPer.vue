@@ -1,9 +1,9 @@
 <template>
     <el-row>
-        <el-table :data="this.laborInfoList" style="width: 100%" border>
+        <el-table :data="this.displayedData" style="width: 100%" border>
                   <el-table-column  label="身份证号" prop="id" />
-                  <!-- <el-table-column  label="姓名" prop="name" />
-                  <el-table-column  label="年龄" prop="age" /> -->
+                  <el-table-column  label="姓名" prop="name" />
+                  <!-- <el-table-column  label="年龄" prop="age" /> -->
                   <el-table-column  label="参加工作时间" prop="workDate" />
                   <el-table-column  label="工资" prop="salary" />
                   <el-table-column label="参保状态">
@@ -20,13 +20,28 @@
                   </el-table-column>
         </el-table>
     </el-row>
-    <el-dialog v-model="this.dialogVisible" title="缴费" style="height: 250px;">
+    <el-row>
+        <el-pagination
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage"
+      :page-size="pageSize"
+      :total="total"
+    >
+    </el-pagination>    
+    </el-row>
+    <el-dialog v-model="this.dialogVisible" title="缴费" style="height: 350px;">
         <el-form v-model="this.addPayMentInfo" label-width="auto">
                   <el-form-item label="身份证号码" prop="id">
                     <el-input v-model="this.addPayMentInfo.id" />
                   </el-form-item>
                   <el-form-item label="工资" prop="salary">
                     <el-input v-model="this.addPayMentInfo.salary" disabled/>
+                  </el-form-item>
+                  <el-form-item label="个人缴费率(%)" prop="personalRate">
+                    <el-input v-model="this.addPayMentInfo.personalRate" disabled/>
+                  </el-form-item>
+                  <el-form-item label="公司缴费率(%)" prop="companyRate">
+                    <el-input v-model="this.addPayMentInfo.companyRate" disabled/>
                   </el-form-item>
                   <el-form-item label="缴纳月份" prop="insuranceDate">
                     <el-date-picker v-model="this.addPayMentInfo.insuranceDate" type="month" value-format="x" placeholder="选择缴纳时间" />
@@ -58,12 +73,17 @@ export default {
           addPayMentInfo:{},
           dialogHistory:false,
           paymentHistoryList:[],
-          balance:null
+          balance:null,
+          displayedData : [],
+            total : 0,
+            currentPage :1,
+            pageSize : 10
         }
 
     },
     mounted(){
       this.getAlllaborInfo();
+      this.getCompanyInfo();
      
     },
     methods:{
@@ -89,6 +109,8 @@ export default {
                 res.data[i].workDate=this.formatDate(Number(res.data[i].workDate));
               }  
                 }
+                this.total=this.laborInfoList.length;
+          this.loadData(this.currentPage)
          
         })
       },
@@ -96,10 +118,11 @@ export default {
         
         request.get('/company/getPayMentById?id='+row.id).then((res)=>{
           for(let i=0;i<res.data.length;i++){
-                    // res.data[i].insuranceDate=this.formatDate(Number(res.data[i].insuranceDate));
+                    res.data[i].insuranceDate=this.formatDate(Number(res.data[i].insuranceDate));
                     res.data[i].paymentDate=this.formatDate(Number(res.data[i].paymentDate));
            }
           this.paymentHistoryList=res.data
+          
         })
         this.dialogHistory=true;
       },
@@ -107,10 +130,13 @@ export default {
         this.dialogVisible=true
         this.addPayMentInfo.id=row.id;
         this.addPayMentInfo.salary=row.salary;
+        this.addPayMentInfo.personalRate=row.personalRate;
+        this.addPayMentInfo.companyRate=row.companyRate;
       },
       payMent(){
-        this.addPayMentInfo.insuranceDate.setMonth(Number(this.addPayMentInfo.insuranceDate.getMonth())+1);
-        this.addPayMentInfo.insuranceDate-=1;
+        const PMDate=new Date(this.addPayMentInfo.insuranceDate);
+        PMDate.setMonth(Number(PMDate.getMonth())+1);
+        this.addPayMentInfo.insuranceDate=Date.parse(PMDate) - 1;
         request.post('/company/payMent',this.addPayMentInfo).then((res)=>{
           console.log(res);
           if(res.code==200){
@@ -119,16 +145,25 @@ export default {
               message:res.msg
             })
             this.dialogVisible=false;
+            this.laborInfoList=[];
             this.addPayMentInfo={};
             this.getAlllaborInfo();
+            this.getCompanyInfo();
           }else{
             this.$message({
               type:'warning',
               message:res.msg
             })
-            this.getAlllaborInfo();
           }
         })
+      },
+      loadData(newPage){
+        this.displayedData=this.laborInfoList.slice(0+((newPage-1)*this.pageSize), this.pageSize+((newPage-1)*this.pageSize))
+      },
+        handleCurrentChange(newPage){
+            this.currentPage = newPage;
+            this.loadData(newPage);
+            console.log(this.displayedData);
       },
       getCompanyInfo(){
         request.get('/company/getCompanyByAddr?address='+localStorage.getItem('userAddress')).then((res)=>{
