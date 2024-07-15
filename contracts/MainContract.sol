@@ -135,7 +135,7 @@ contract MainContract{
         staffs[ownerApplication[_index].toCompany].push(ownerApplication[_index].id);
         staffs[ownerApplication[_index].fromCompany] = removeStaffById(staffs[ownerApplication[_index].fromCompany],ownerApplication[_index].id);
 
-        laborInfos[getLaIndexForC(ownerApplication[_index].toCompany,ownerApplication[_index].id)].separationDate=now;
+        laborInfos[getLaIndexForC(ownerApplication[_index].fromCompany,ownerApplication[_index].id)].separationDate=now;
         laborInfos[getLaIndexForC(ownerApplication[_index].fromCompany,ownerApplication[_index].id)].isSponsored=true;
         LaborInfo memory laborInfo=laborInfos[getLaIndexForC(ownerApplication[_index].fromCompany,ownerApplication[_index].id)];
         // laborInfo.laborInfoIndex=laborInfoIndex;
